@@ -1,0 +1,26 @@
+AxeHub Miner — End-User License Agreement
+Copyright (c) 2026 AxeHub. All rights reserved.
+
+This software is distributed in BINARY FORM ONLY. By downloading, installing,
+or running it, you agree to the following terms.
+
+1. Grant. You receive a non-exclusive, non-transferable, revocable license to
+   install and run unmodified copies of the binaries for your own mining use.
+
+2. Restrictions. You may NOT: (a) reverse engineer, decompile, disassemble, or
+   otherwise attempt to derive the source code or internal design; (b) modify,
+   patch, or create derivative works; (c) redistribute, resell, sublicense,
+   rent, repackage, or bundle the binaries into another product; (d) remove or
+   alter any notice, branding, or the disclosed developer fee.
+
+3. Developer fee. The build mines ~1% of the time to the developer's address
+   (disclosed). Running the software constitutes acceptance of this fee.
+
+4. No warranty / liability. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY
+   OF ANY KIND. The author is not liable for any damages, lost rewards, hardware
+   wear, downtime, or other losses. Mine at your own risk.
+
+5. Third-party components. This product includes third-party software covered by
+   their own licenses; see THIRD-PARTY-NOTICES.txt.
+
+6. Termination. This license terminates automatically upon any breach.

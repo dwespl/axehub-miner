@@ -1,0 +1,29 @@
+# binaries & archives belong in GitHub Releases, not in git
+*.zip
+*.tar.gz
+*.tgz
+*.exe
+*.so
+*.dll
+*.dylib
+*.obj
+*.o
+*.bin
+*.lib
+*.exp
+*.pdb
+# never commit any miner config or source here (this repo is binary-only)
+*.conf
+axehub-miner.conf
+*.c
+*.cpp
+*.cc
+*.cu
+*.cl
+*.comp
+*.h
+*.hpp
+*.inc
+*.ps1
+*.sh
+*.bat

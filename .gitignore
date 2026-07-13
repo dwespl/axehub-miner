@@ -12,9 +12,11 @@
 *.lib
 *.exp
 *.pdb
-# never commit any miner config or source here (this repo is binary-only)
+# never commit any miner config, log, or source here (this repo is binary-only)
 *.conf
 axehub-miner.conf
+*.log
+*.txt.bak
 *.c
 *.cpp
 *.cc

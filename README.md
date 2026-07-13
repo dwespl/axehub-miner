@@ -1,9 +1,13 @@
 # AxeHub Miner
 
-A fast multi-backend **solo miner for CapStash (CAP)** — a Whirlpool-512 fold
-proof-of-work coin. One binary mines on NVIDIA (CUDA), AMD/Intel & other GPUs
-(Vulkan), or CPU (AVX2), on **Windows and Linux**. Live TUI + HTTP status,
-bit-exact GPU==CPU self-test, automatic efficiency tuning, 1% disclosed dev fee.
+A fast multi-backend **solo miner** for two proof-of-work coins from one binary:
+
+- **CapStash (CAP)** — Whirlpool-512 fold (default)
+- **BitcoinIII (BC3)** — triple-SHA3-256 (`--algo sha3-256t`)
+
+It mines on NVIDIA (CUDA), AMD/Intel & other GPUs (Vulkan), or CPU (AVX2), on
+**Windows and Linux**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
+automatic efficiency tuning, 1% disclosed dev fee.
 
 > Distributed in **binary form only**. See [Releases](../../releases) for the
 > latest build.
@@ -14,8 +18,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.0-windows-x64.zip` | CUDA · Vulkan · CPU |
-| Linux x64   | `axehub-miner-v1.0-linux-x64.tar.gz` | CUDA · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v1.1-windows-x64.zip` | CUDA · Vulkan · CPU |
+| Linux x64   | `axehub-miner-v1.1-linux-x64.tar.gz` | CUDA · Vulkan · CPU |
 
 ## Quick start
 
@@ -26,8 +30,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.0-linux-x64.tar.gz
-cd axehub-miner-v1.0-linux-x64
+tar -xzf axehub-miner-v1.1-linux-x64.tar.gz
+cd axehub-miner-v1.1-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your CAP wallet
 ./axehub-miner
@@ -35,13 +39,27 @@ chmod +x axehub-miner libcap_cuda.so
 
 A live status panel appears; the pool credits blocks to your address (solo).
 
+### Mining BitcoinIII (BC3) instead
+
+BC3 is triple-SHA3-256. Switch algorithm and pool, and use a BitcoinIII
+(`bc1...`) address:
+
+```
+--algo sha3-256t --pool pool.axehub.app:3338 --wallet bc1...
+```
+
+or set `algo = sha3-256t`, `pool = pool.axehub.app:3338` and a `bc1...` wallet in
+`axehub-miner.conf`. Same three backends (CUDA / Vulkan / CPU); the 1% dev fee
+applies the same way.
+
 ## Verify the build
 
 ```sh
-axehub-miner --selftest      # ./axehub-miner --selftest on Linux
+axehub-miner --selftest                  # CapStash (Whirlpool)
+axehub-miner --algo sha3-256t --selftest # BitcoinIII (triple-SHA3)
 ```
-Runs a bit-exact GPU==CPU correctness check (Whirlpool NESSIE vector + 1M
-nonces). It must print `self-test PASS`.
+Runs a bit-exact GPU==CPU correctness check against a known test vector
+(Whirlpool NESSIE / SHA3 NIST + 1M nonces). It must print `self-test PASS`.
 
 ## Supported hardware
 
@@ -55,8 +73,8 @@ nonces). It must print `self-test PASS`.
 ## Key flags (override the conf)
 
 ```
---pool host:port   --wallet cap1...   --pass d=1   --worker NAME
---backend auto|cuda|vulkan   --gpus 0,1   --cpu
+--pool host:port   --wallet ADDR   --pass d=1   --worker NAME
+--algo whirlpool|sha3-256t   --backend auto|cuda|vulkan   --gpus 0,1   --cpu
 --tune-eff   sweep + lock the efficiency-optimal GPU core clock (NVIDIA)
 --no-tui     plain scrolling log (headless / service use)
 --selftest   bit-exact correctness gate
@@ -65,15 +83,16 @@ nonces). It must print `self-test PASS`.
 ## Dev fee
 
 This build mines **1%** of the time to the developer's address (disclosed;
-~6 s per 600 s). The other 99% goes entirely to your configured wallet.
+~6 s per 600 s), for CapStash (CAP) and BitcoinIII (BC3) alike. The other 99%
+goes entirely to your configured wallet.
 
 The optional **Monero (XMR) dual-mine carries no dev fee (0%)** — the 1% applies
-to CapStash (CAP) mining only.
+to CapStash (CAP) / BitcoinIII (BC3) mining only.
 
 ## Monero (XMR) dual-mine (optional)
 
 Idle CPU cores can mine **Monero (RandomX)** at the same time the GPU mines
-CapStash — free extra revenue at **0% dev fee** (100% of the XMR goes to your
+CAP or BC3 — free extra revenue at **0% dev fee** (100% of the XMR goes to your
 wallet). Off by default; enable it by setting `xmr_pool` + `xmr_wallet` in
 `axehub-miner.conf` (or `--xmr-pool` / `--xmr-wallet`). Needs ~2 GB RAM for the
 RandomX dataset.

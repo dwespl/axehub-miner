@@ -52,6 +52,23 @@ or set `algo = sha3-256t`, `pool = pool.axehub.app:3338` and a `bc1...` wallet i
 `axehub-miner.conf`. Same three backends (CUDA / Vulkan / CPU); the 1% dev fee
 applies the same way.
 
+### Mining on the CPU
+
+The CPU is a first-class backend (x86-64, AVX2-accelerated with a scalar
+fallback). Turn it on in any of these ways:
+
+```
+--backend cpu          # CPU only, no GPU
+--backend auto,cpu     # GPU and CPU at the same time
+--cpu                  # shorthand: add the CPU on top of the default GPU backends
+--cpu-threads N        # worker threads (omit or 0 = auto, leaves one core free)
+```
+
+or in `axehub-miner.conf` set `backend = cpu` (or `auto,cpu`), or
+`cpu_threads = auto` (or a number). CPU mining honours `--algo`, so it works for
+both CapStash and BitcoinIII. It is much slower than a GPU — use it on machines
+without one, or to mine on spare cores alongside the GPU.
+
 ## Verify the build
 
 ```sh
@@ -74,7 +91,8 @@ Runs a bit-exact GPU==CPU correctness check against a known test vector
 
 ```
 --pool host:port   --wallet ADDR   --pass d=1   --worker NAME
---algo whirlpool|sha3-256t   --backend auto|cuda|vulkan   --gpus 0,1   --cpu
+--algo whirlpool|sha3-256t   --backend auto|cuda|vulkan|cpu   --gpus 0,1
+--cpu   --cpu-threads N   add the CPU as a mining device (see "Mining on the CPU")
 --tune-eff   sweep + lock the efficiency-optimal GPU core clock (NVIDIA)
 --no-tui     plain scrolling log (headless / service use)
 --selftest   bit-exact correctness gate

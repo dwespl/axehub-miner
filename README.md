@@ -65,7 +65,7 @@ fallback). Turn it on in any of these ways:
 ```
 
 or in `axehub-miner.conf` set `backend = cpu` (or `auto,cpu`), or
-`cpu_threads = auto` (or a number). CPU mining honours `--algo`, so it works for
+`cpu_threads = auto` (or a number). CPU mining honors `--algo`, so it works for
 both CapStash and BitcoinIII. It is much slower than a GPU — use it on machines
 without one, or to mine on spare cores alongside the GPU.
 
@@ -99,7 +99,8 @@ Runs a bit-exact GPU==CPU correctness check against a known test vector
 --selftest   bit-exact correctness gate
 --http PORT       status page + API (localhost only)
 --http-bind lan   also serve on the LAN (e.g. the phone app)
---http-token SEC  token for remote pool/wallet changes over the API
+--http-token SEC  required before the API may change pool or wallet (without it
+                  those are refused; read-only status stays open)
 ```
 
 ## Dev fee

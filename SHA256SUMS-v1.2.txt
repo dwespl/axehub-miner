@@ -1,0 +1,2 @@
+0e85e55dbfcdb9013def310a1c92472b8bb0beb607bb64bf27a4cf00727d75dd  axehub-miner-v1.2-windows-x64.zip
+5cb4ec89df09feb6a6d998e4e074c991269a18ed3f4d56c729210df87a9e42da  axehub-miner-v1.2-linux-x64.tar.gz

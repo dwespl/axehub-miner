@@ -7,7 +7,7 @@ A fast multi-backend **solo miner** for two proof-of-work coins from one binary:
 
 It mines on NVIDIA (CUDA), AMD/Intel & other GPUs (Vulkan), or CPU (AVX2), on
 **Windows and Linux**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
-automatic efficiency tuning, 1% disclosed dev fee.
+a built-in clock tuner, 1% disclosed dev fee.
 
 > Distributed in **binary form only**. See [Releases](../../releases) for the
 > latest build.
@@ -18,8 +18,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.1-windows-x64.zip` | CUDA · Vulkan · CPU |
-| Linux x64   | `axehub-miner-v1.1-linux-x64.tar.gz` | CUDA · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v1.2-windows-x64.zip` | CUDA · Vulkan · CPU |
+| Linux x64   | `axehub-miner-v1.2-linux-x64.tar.gz` | CUDA · Vulkan · CPU |
 
 ## Quick start
 
@@ -30,8 +30,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.1-linux-x64.tar.gz
-cd axehub-miner-v1.1-linux-x64
+tar -xzf axehub-miner-v1.2-linux-x64.tar.gz
+cd axehub-miner-v1.2-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your CAP wallet
 ./axehub-miner
@@ -93,9 +93,13 @@ Runs a bit-exact GPU==CPU correctness check against a known test vector
 --pool host:port   --wallet ADDR   --pass d=1   --worker NAME
 --algo whirlpool|sha3-256t   --backend auto|cuda|vulkan|cpu   --gpus 0,1
 --cpu   --cpu-threads N   add the CPU as a mining device (see "Mining on the CPU")
---tune-eff   sweep + lock the efficiency-optimal GPU core clock (NVIDIA)
+--tune MODE  sweep + lock the best GPU clock for MODE, then exit (NVIDIA, admin;
+             MODE = hashrate|efficiency|balanced|profit - profit needs --kwh + --rev)
 --no-tui     plain scrolling log (headless / service use)
 --selftest   bit-exact correctness gate
+--http PORT       status page + API (localhost only)
+--http-bind lan   also serve on the LAN (e.g. the phone app)
+--http-token SEC  token for remote pool/wallet changes over the API
 ```
 
 ## Dev fee

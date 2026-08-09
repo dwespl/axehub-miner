@@ -2,6 +2,23 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.2] - 2026-08-09
+
+Tuning, monitoring and reliability improvements. Same two coins (CAP, BC3),
+same three backends (CUDA / Vulkan / CPU), one binary, Windows and Linux.
+
+### Added
+- **`--tune MODE`** picks what the clock tuner optimizes for:
+  `hashrate` | `efficiency` | `balanced` | `profit` (profit uses `--kwh` and
+  `--rev`). It sweeps on the algorithm you selected, saves the chosen clock to the
+  conf, and re-applies it at startup. (`--tune-eff` is a shorthand for `--tune efficiency`.)
+- **`--http-bind` and `--http-token` command-line flags** — `--http-bind lan`
+  serves the status page on the LAN (e.g. the phone app); `--http-token SECRET`
+  gates remote pool/wallet changes over the API. Localhost only unless you pass `lan`.
+
+### Changed
+- Smoother behavior on long unattended runs and across pool reconnects.
+
 ## [1.1] - 2026-07-13
 
 Adds a second coin: **BitcoinIII (BC3)**, triple-SHA3-256. One binary now mines

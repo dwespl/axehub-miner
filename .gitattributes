@@ -1,0 +1,4 @@
+# Checksum files are consumed by `sha256sum -c`, which rejects CRLF outright
+# ("no properly formatted SHA256 checksum lines found"). Keep them LF in the repo
+# and in every checkout, whatever core.autocrlf the contributor has.
+SHA256SUMS-*.txt text eol=lf

@@ -2,6 +2,31 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.3] - 2026-08-11
+
+Adds **Hive OS** support and native Blackwell (RTX 50xx) GPU code. Same two coins
+(CAP, BC3), same three backends (CUDA / Vulkan / CPU), one binary — Windows, Linux
+and Hive OS. All three packages ship the Vulkan loader (`vulkan-1.dll` /
+`libvulkan.so.1`) beside the binary — your GPU vendor's Vulkan driver is still
+required — and the Linux and Hive OS builds run on glibc 2.31 or newer.
+
+### Added
+- **Hive OS package** — `axehub-miner-1.3.tar.gz`. Paste the asset URL as the
+  custom miner **Installation URL**, fill in the flight sheet and mine.
+  Hashrate, accepted/rejected shares and uptime report to the Hive OS dashboard;
+  per-GPU temperature and fan are reported on the CUDA (NVIDIA) path, and read 0
+  with no card mapping on the Vulkan path.
+- Flight-sheet support for the algorithm via **Hash algorithm** (`whirlpool` or
+  `sha3-256t`; coin names accepted as aliases), for a fallback pool (a second
+  `host:port` in the Pool URL field), and for tuning keys such as
+  `backend = vulkan` in the extra config box.
+- **Native Blackwell (RTX 50xx) GPU code** — the supported NVIDIA range spans
+  GTX 10xx through RTX 50xx and newer.
+- On an AMD rig, or an Intel-only rig, whose Hive OS image ships no Vulkan driver,
+  the start script attempts to install `mesa-vulkan-drivers` once per boot (needs
+  working apt and network); if it fails it prints that on the miner console and the
+  Vulkan backend stays unavailable.
+
 ## [1.2] - 2026-08-09
 
 Tuning, monitoring and reliability improvements. Same two coins (CAP, BC3),

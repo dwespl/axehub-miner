@@ -2,6 +2,37 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.4] - 2026-08-13
+
+Clock tuning now sticks on Hive OS, and the CPU backend is more careful about which of
+its kernels it picks. Same two coins (CAP, BC3), same three backends (CUDA / Vulkan /
+CPU), one binary — Windows, Linux and Hive OS.
+
+### Fixed
+- **On Hive OS, a clock chosen by `--tune` no longer disappears.** It is saved beside
+  the config in its own file, which applying a flight sheet does not touch, so the
+  miner re-applies it at every start with nothing to copy into the panel by hand.
+
+### Changed
+- **`--tune` keeps its pick in its own file, `axehub-miner.conf.clock`, beside the
+  config.** The config itself is left alone. To clear a saved clock, delete that file;
+  `nvidia-smi -i <pci-bus-id> -rgc` releases the lock on a card that is already running
+  (the miner prints the bus id when it saves). If you upgraded from
+  an earlier version and have a `clock_lock` line in your config, that line still wins —
+  remove it to let tuning take over.
+- A `clock_lock` line you set yourself in the flight sheet's **Extra config arguments**
+  box wins outright, and the saved file is ignored. Pin every card you want in that
+  single line, or leave the key out of the box and let tuning own it.
+
+### Added
+- The Hive OS package now ships its `README.md`, covering the flight-sheet fields and
+  tuning end to end: running it from a Hive Shell, which field in the OC tab takes an
+  absolute locked clock rather than an offset, and how to clear one.
+- The CPU backend now takes the median of several measurements per kernel on both
+  algorithms, and sizes each measurement to the machine so the check costs about the
+  same whether the CPU is fast or slow. On a machine where two kernels are close, the
+  faster one is picked more reliably.
+
 ## [1.3] - 2026-08-11
 
 Adds **Hive OS** support and native Blackwell (RTX 50xx) GPU code. Same two coins

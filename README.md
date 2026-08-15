@@ -9,6 +9,10 @@ It mines on NVIDIA (CUDA), AMD/Intel & other GPUs (Vulkan), or CPU
 (x86-64, vector-accelerated), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
 a built-in clock tuner, 1% disclosed dev fee.
 
+There is no pool hardcoded anywhere: point `--pool` at any pool serving these
+coins. Ours are `pool.axehub.app:3336` (CAP) and `pool.axehub.app:3338` (BC3),
+and they are what the examples below use.
+
 > Distributed in **binary form only**. See [Releases](../../releases) for the
 > latest build.
 
@@ -18,9 +22,9 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.3-windows-x64.zip` | CUDA · Vulkan · CPU |
-| Linux x64   | `axehub-miner-v1.3-linux-x64.tar.gz` | CUDA · Vulkan · CPU |
-| Hive OS     | `axehub-miner-1.3.tar.gz` | CUDA · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v1.4-windows-x64.zip` | CUDA · Vulkan · CPU |
+| Linux x64   | `axehub-miner-v1.4-linux-x64.tar.gz` | CUDA · Vulkan · CPU |
+| Hive OS     | `axehub-miner-1.4.tar.gz` | CUDA · Vulkan · CPU |
 
 ## Quick start
 
@@ -31,8 +35,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.3-linux-x64.tar.gz
-cd axehub-miner-v1.3-linux-x64
+tar -xzf axehub-miner-v1.4-linux-x64.tar.gz
+cd axehub-miner-v1.4-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your CAP wallet
 ./axehub-miner
@@ -49,7 +53,7 @@ A live status panel appears; the pool credits blocks to your address (solo).
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-1.3.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-1.4.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 
@@ -81,6 +85,33 @@ package yourself and reboot.
 On Hive OS there is no `axehub-miner.conf` to edit: wherever this README says
 "set X in the conf", put `X = ...` in the flight sheet's **Extra config
 arguments** box instead.
+
+**Clock tuning on Hive OS.** NVIDIA only — the tuner drives NVML, and on an AMD or
+CPU device it says so and exits without touching the config. It needs root, which
+a Hive Shell already is. Stop the miner first — the tuner takes the same GPU as
+the running one. From a Hive Shell:
+
+```
+miner stop
+cd /hive/miners/custom/axehub-miner
+./axehub-miner --algo sha3-256t --tune hashrate
+miner start
+```
+
+The `cd` matters: the miner resolves its config relative to the working
+directory. The chosen clock is written to its own file next to the config —
+`axehub-miner.conf.clock` — and re-applied at every start; the flight sheet
+rebuilds the config and never touches it, so there is nothing to copy into the
+panel. Your config is not modified by the tuner at all.
+
+The value is an **absolute locked core clock** (what `nvidia-smi -lgc` sets), not
+a `+/-` offset — if you prefer to set it in Hive's OC tab, it belongs in **Lock
+Core Clock (MHz)**, not **Core Clock**. To clear a saved clock, delete that file
+**and** run `nvidia-smi -i <pci-bus-id> -rgc` — an NVML lock outlives the process
+that set it, so deleting the file alone stops the clock coming back but does not
+release a card that is already locked. The miner prints the bus id when it saves;
+it is not the same as the miner's device index. A `clock_lock` you set in Extra config wins outright and
+the file is ignored, so pin every card in that single line or leave the key out.
 
 ### Mining BitcoinIII (BC3) instead
 
@@ -133,7 +164,7 @@ Runs a bit-exact GPU==CPU correctness check against a known test vector
 - **CPU:** any x86-64, with runtime AVX2 dispatch and a scalar fallback;
   AVX-512 is used for `sha3-256t` where the CPU supports it.
 - `--backend auto`: NVIDIA → CUDA, everything else → Vulkan.
-- **OS:** Windows x64, Linux x86-64 (glibc 2.31+), Hive OS (custom miner package).
+- **OS:** Windows x64, Linux x86-64 (glibc 2.29+), Hive OS (custom miner package).
 
 ## Key flags (override the conf)
 
@@ -141,7 +172,8 @@ Runs a bit-exact GPU==CPU correctness check against a known test vector
 --pool host:port   --wallet ADDR   --pass d=1   --worker NAME
 --algo whirlpool|sha3-256t   --backend auto|cuda|vulkan|cpu   --gpus 0,1
 --cpu   --cpu-threads N   add the CPU as a mining device (see "Mining on the CPU")
---tune MODE  sweep + lock the best GPU clock for MODE, then exit (NVIDIA, admin;
+--tune MODE  sweep + lock the best GPU clock for MODE, then exit (NVIDIA; admin on
+             Windows, root on Linux and Hive OS;
              MODE = hashrate|efficiency|balanced|profit - profit needs --kwh + --rev)
 --no-tui     plain scrolling log (headless / service use)
 --selftest   bit-exact correctness gate

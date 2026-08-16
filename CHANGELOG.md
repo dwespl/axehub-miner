@@ -2,6 +2,30 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.5] - 2026-08-16
+
+Temperature and fan monitoring for AMD cards, alongside NVIDIA. Same two coins (CAP,
+BC3), same three backends (CUDA / Vulkan / CPU), one binary — Windows, Linux and Hive OS.
+
+### Added
+- **Temperature and fan readings for AMD GPUs.** The miner reads AMD's control library on
+  Windows and the kernel's sensor nodes on Linux, matching each card by its PCI bus id; on
+  Linux, any card whose driver exposes a sensor node is read the same way. The readings
+  appear in the status display, in the HTTP API and on the Hive OS panel, and `temp_limit`
+  acts on them.
+- A card whose sensors are unavailable reports no value, and the thermal limit stays out
+  of the way on that device.
+- Every CPU kernel proves itself against the reference implementation on your own machine
+  before it is used to mine.
+
+### Changed
+- `--selftest` on the CPU device checks every CPU kernel that could be selected on your
+  machine.
+- The CPU backend's Whirlpool starting kernel is an 8-wide batch; per-machine autotuning
+  has the final say.
+- The status display's device column shows the card model, with the vendor and brand words
+  dropped so the model itself has the room.
+
 ## [1.4] - 2026-08-13
 
 Clock tuning now sticks on Hive OS, and the CPU backend is more careful about which of

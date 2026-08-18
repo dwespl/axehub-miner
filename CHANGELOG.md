@@ -2,6 +2,28 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.6] - 2026-08-18
+
+An OpenCL backend that makes AMD cards faster, and a tuner that now also tunes the GPU
+memory clock. Same two coins (CAP, BC3), one binary — Windows, Linux and Hive OS.
+
+### Added
+- **OpenCL compute backend for AMD.** `--backend opencl` (or `cuda,opencl` on a mixed
+  NVIDIA+AMD rig) drives AMD GPUs through OpenCL, which is faster than Vulkan on AMD, using
+  the OpenCL runtime already on the system. NVIDIA keeps running CUDA by default; add
+  `opencl` only for the AMD card.
+- **Memory-clock tuning in `--tune`.** It measures on your card whether a lower memory
+  clock saves power without costing hashrate, pins it when it pays off, and reports what it
+  saved. New `mem_lock` config key, same grammar as `clock_lock`. NVIDIA Ampere or newer
+  only; any other card is told plainly and keeps mining.
+- **Board-power reporting for AMD cards on Linux**, from the same kernel sensor node as
+  temperature and fan, so watts and efficiency show on a Linux AMD rig.
+
+### Changed
+- The core clock is tuned with the memory clock already set — they are one operating point,
+  so re-run `--tune` after upgrading.
+- Clearer output while the tuner runs, and smoother behaviour on long unattended runs.
+
 ## [1.5] - 2026-08-16
 
 Temperature and fan monitoring for AMD cards, alongside NVIDIA. Same two coins (CAP,

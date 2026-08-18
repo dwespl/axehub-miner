@@ -5,8 +5,8 @@ A fast multi-backend **solo miner** for two proof-of-work coins from one binary:
 - **CapStash (CAP)** — Whirlpool-512 fold (default)
 - **BitcoinIII (BC3)** — triple-SHA3-256 (`--algo sha3-256t`)
 
-It mines on NVIDIA (CUDA), AMD/Intel & other GPUs (Vulkan), or CPU
-(x86-64, vector-accelerated), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
+It mines on NVIDIA (CUDA), AMD (OpenCL — fastest on AMD — or Vulkan), Intel &
+other GPUs (Vulkan), or CPU (x86-64, vector-accelerated), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
 a built-in clock tuner, 1% disclosed dev fee.
 
 There is no pool hardcoded anywhere: point `--pool` at any pool serving these
@@ -22,9 +22,9 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.5-windows-x64.zip` | CUDA · Vulkan · CPU |
-| Linux x64   | `axehub-miner-v1.5-linux-x64.tar.gz` | CUDA · Vulkan · CPU |
-| Hive OS     | `axehub-miner-1.5.tar.gz` | CUDA · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v1.6-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64   | `axehub-miner-v1.6-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Hive OS     | `axehub-miner-1.6.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
 
 ## Quick start
 
@@ -35,8 +35,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.5-linux-x64.tar.gz
-cd axehub-miner-v1.5-linux-x64
+tar -xzf axehub-miner-v1.6-linux-x64.tar.gz
+cd axehub-miner-v1.6-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your CAP wallet
 ./axehub-miner
@@ -53,7 +53,7 @@ A live status panel appears; the pool credits blocks to your address (solo).
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-1.5.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-1.6.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 
@@ -124,7 +124,7 @@ BC3 is triple-SHA3-256. Switch algorithm and pool, and use a BitcoinIII
 ```
 
 or set `algo = sha3-256t`, `pool = pool.axehub.app:3338` and a `bc1...` wallet in
-`axehub-miner.conf`. Same three backends (CUDA / Vulkan / CPU); the 1% dev fee
+`axehub-miner.conf`. Same four backends (CUDA / OpenCL / Vulkan / CPU); the 1% dev fee
 applies the same way.
 
 ### Mining on the CPU

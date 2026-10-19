@@ -2,6 +2,21 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.7] - 2026-10-19
+
+Adds bc3hash — BitcoinIII's current proof of work — on NVIDIA and AMD GPUs, and brings AMD
+cards to it on Hive OS. One binary — Windows, Linux and Hive OS.
+
+### Added
+- **bc3hash (`--algo bc3hash`)** on NVIDIA (CUDA) and AMD or other discrete GPUs (OpenCL).
+  BitcoinIII adopted it at its hard fork; the pre-fork `sha3-256t` stays selectable.
+- **AMD cards mine bc3hash on Hive OS** out of the box — no setup, and NVIDIA and the other
+  algorithms are unaffected.
+- **`power_cap`** — on AMD (Linux), `--tune` picks and saves a per-GPU power cap.
+
+### Changed
+- Packaging and reliability improvements across all three builds.
+
 ## [1.6] - 2026-08-18
 
 An OpenCL backend that makes AMD cards faster, and a tuner that now also tunes the GPU

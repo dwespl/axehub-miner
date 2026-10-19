@@ -30,7 +30,9 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Windows**
 1. Extract the zip.
-2. Open `axehub-miner.conf`, set `wallet` to your CapStash (CAP) address.
+2. Open `axehub-miner.conf` and set `wallet` to your payout address — CapStash
+   (`cap1...`) by default, or BitcoinIII (`bc1...`) with `algo = bc3hash` and the
+   BC3 pool (see *Mining BitcoinIII (BC3)* below).
 3. Run `axehub-miner.exe`.
 
 **Linux**
@@ -38,7 +40,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 tar -xzf axehub-miner-v1.7-linux-x64.tar.gz
 cd axehub-miner-v1.7-linux-x64
 chmod +x axehub-miner libcap_cuda.so
-# edit axehub-miner.conf -> set your CAP wallet
+# edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
+# BitcoinIII: bc1... + algo = bc3hash)
 ./axehub-miner
 ```
 

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: AxeHub website
+    url: https://axehub.app
+    about: Downloads, supported coins, and a setup overview.
+  - name: Verify your download first
+    url: https://github.com/dwespl/axehub-miner#verify-the-build
+    about: Check your binary against the published SHA256SUMS before opening an issue.

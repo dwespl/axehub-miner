@@ -1,5 +1,11 @@
 # AxeHub Miner
 
+[![Latest release](https://img.shields.io/github/v/release/dwespl/axehub-miner?color=ff8a1e&label=release)](../../releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/dwespl/axehub-miner/total?color=ff8a1e&label=downloads)](../../releases)
+![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20Linux%20%7C%20Hive%20OS-54a8ff)
+![GPU backends](https://img.shields.io/badge/GPU-CUDA%20%7C%20OpenCL%20%7C%20Vulkan%20%7C%20CPU-3fd07a)
+![License](https://img.shields.io/badge/license-proprietary%20(binary--only)-8593a5)
+
 A fast multi-backend **solo miner** for two proof-of-work coins from one binary:
 
 - **CapStash (CAP)** — Whirlpool-512 (default)

@@ -22,9 +22,9 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.7-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64   | `axehub-miner-v1.7-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
-| Hive OS     | `axehub-miner-1.7.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v1.7.1-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64   | `axehub-miner-v1.7.1-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Hive OS     | `axehub-miner-1.7.1.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
 
 ## Quick start
 
@@ -37,8 +37,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.7-linux-x64.tar.gz
-cd axehub-miner-v1.7-linux-x64
+tar -xzf axehub-miner-v1.7.1-linux-x64.tar.gz
+cd axehub-miner-v1.7.1-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
 # BitcoinIII: bc1... + algo = bc3hash)
@@ -56,7 +56,7 @@ A live status panel appears; the pool credits blocks to your address (solo).
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-1.7.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-1.7.1.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 

@@ -2,6 +2,19 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.7.1] - 2026-10-21
+
+Broader GPU coverage for bc3hash — BitcoinIII's proof of work now runs on the newest and
+the older NVIDIA generations. One binary — Windows, Linux and Hive OS.
+
+### Added
+- **bc3hash on RTX 50-series and GTX 10-series GPUs.** These join the already-supported
+  RTX 20/30/40 and GTX 16 cards; CapStash (whirlpool) and sha3-256t are unchanged and
+  cover the full range.
+
+### Changed
+- No configuration changes — existing configs and Hive OS flight sheets keep working.
+
 ## [1.7] - 2026-10-19
 
 Adds bc3hash — BitcoinIII's current proof of work — on NVIDIA and AMD GPUs, and brings AMD

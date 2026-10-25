@@ -2,6 +2,27 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.7.2] - 2026-10-25
+
+Faster bc3hash, and a miner you can steer while it runs — from its panel or its status
+page. One binary — Windows, Linux and Hive OS.
+
+### Added
+- **Controls in the live panel and on the `--http` status page.** Pause or resume the
+  rig or a single device; change the wallet, pool, worker and temperature limit on the
+  fly; save them to the config; tune a device or the whole rig; restart. Over HTTP every
+  change needs `--http-token`, read-only status stays open.
+- **More statistics:** energy used, session average, hashrate history and time since the
+  last share.
+- **bc3hash on the CPU** (`--cpu`, or `backend = cpu`), on any processor (AVX2 makes it
+  faster). All three algorithms now mine on the CPU; it is far slower than a GPU, for
+  machines without one or for spare cores beside it.
+
+### Changed
+- **bc3hash is faster** on NVIDIA and AMD cards.
+- **bc3hash on AMD also runs with AMD's own OpenCL driver** (amdgpu-pro) on Linux.
+- No configuration changes — existing configs and Hive OS flight sheets keep working.
+
 ## [1.7.1] - 2026-10-21
 
 Broader GPU coverage for bc3hash — BitcoinIII's proof of work now runs on the newest and
@@ -32,13 +53,13 @@ cards to it on Hive OS. One binary — Windows, Linux and Hive OS.
 
 ## [1.6] - 2026-08-18
 
-An OpenCL backend that makes AMD cards faster, and a tuner that now also tunes the GPU
+An OpenCL backend for AMD cards, and a tuner that now also tunes the GPU
 memory clock. Same two coins (CAP, BC3), one binary — Windows, Linux and Hive OS.
 
 ### Added
 - **OpenCL compute backend for AMD.** `--backend opencl` (or `cuda,opencl` on a mixed
-  NVIDIA+AMD rig) drives AMD GPUs through OpenCL, which is faster than Vulkan on AMD, using
-  the OpenCL runtime already on the system. NVIDIA keeps running CUDA by default; add
+  NVIDIA+AMD rig) drives AMD GPUs through OpenCL, using the OpenCL runtime already on the
+  system. NVIDIA keeps running CUDA by default; add
   `opencl` only for the AMD card.
 - **Memory-clock tuning in `--tune`.** It measures on your card whether a lower memory
   clock saves power without costing hashrate, pins it when it pays off, and reports what it
@@ -71,8 +92,6 @@ BC3), same three backends (CUDA / Vulkan / CPU), one binary — Windows, Linux a
 ### Changed
 - `--selftest` on the CPU device checks every CPU kernel that could be selected on your
   machine.
-- The CPU backend's Whirlpool starting kernel is an 8-wide batch; per-machine autotuning
-  has the final say.
 - The status display's device column shows the card model, with the vendor and brand words
   dropped so the model itself has the room.
 
@@ -102,10 +121,7 @@ CPU), one binary — Windows, Linux and Hive OS.
 - The Hive OS package now ships its `README.md`, covering the flight-sheet fields and
   tuning end to end: running it from a Hive Shell, which field in the OC tab takes an
   absolute locked clock rather than an offset, and how to clear one.
-- The CPU backend now takes the median of several measurements per kernel on both
-  algorithms, and sizes each measurement to the machine so the check costs about the
-  same whether the CPU is fast or slow. On a machine where two kernels are close, the
-  faster one is picked more reliably.
+- The CPU backend picks its best setting for the machine more reliably.
 
 ## [1.3] - 2026-08-11
 
@@ -126,7 +142,7 @@ required — and the Linux and Hive OS builds run on glibc 2.31 or newer.
   `host:port` in the Pool URL field), and for tuning keys such as
   `backend = vulkan` in the extra config box.
 - **Native Blackwell (RTX 50xx) GPU code** — the supported NVIDIA range spans
-  GTX 10xx through RTX 50xx and newer.
+  GTX 10xx through RTX 50xx.
 - On an AMD rig, or an Intel-only rig, whose Hive OS image ships no Vulkan driver,
   the start script attempts to install `mesa-vulkan-drivers` once per boot (needs
   working apt and network); if it fails it prints that on the miner console and the
@@ -173,10 +189,9 @@ Linux.
 First public release.
 
 ### Added
-- Multi-backend solo miner for **CapStash (CAP)** — Whirlpool-512 fold PoW.
-- Backends from one binary: CUDA (NVIDIA), Vulkan (AMD / Intel & others), CPU
-  (AVX2 autotune).
+- Multi-backend solo miner for **CapStash (CAP)** — whirlpool.
+- Backends from one binary: CUDA (NVIDIA), Vulkan (AMD / Intel & others), CPU.
 - Live TUI + HTTP status page, bit-exact GPU==CPU self-test, automatic efficiency
-  tuner (best MH/W).
+  tuner.
 - Optional Monero (XMR) CPU dual-mine at 0% dev fee.
 - 1% disclosed dev fee. Windows and Linux builds.

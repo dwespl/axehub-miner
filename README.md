@@ -8,12 +8,12 @@
 
 A fast multi-backend **solo miner** for two proof-of-work coins from one binary:
 
-- **CapStash (CAP)** — Whirlpool-512 (default)
+- **CapStash (CAP)** — whirlpool (default)
 - **BitcoinIII (BC3)** — bc3hash (`--algo bc3hash`; the pre-fork `sha3-256t` still works)
 
-It mines on NVIDIA (CUDA), AMD (OpenCL — fastest on AMD — or Vulkan), Intel &
-other GPUs (Vulkan), or CPU (x86-64, vector-accelerated), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
-a built-in clock tuner, 1% disclosed dev fee.
+It mines on NVIDIA (CUDA), AMD (OpenCL or Vulkan), Intel &
+other GPUs (Vulkan), or CPU (x86-64), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
+a built-in tuner, 1% disclosed dev fee.
 
 There is no pool hardcoded anywhere: point `--pool` at any pool serving these
 coins. Ours are `pool.axehub.app:3336` (CAP) and `pool.axehub.app:3338` (BC3),
@@ -28,9 +28,9 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.7.1-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64   | `axehub-miner-v1.7.1-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
-| Hive OS     | `axehub-miner-1.7.1.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v1.7.2-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64   | `axehub-miner-v1.7.2-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Hive OS     | `axehub-miner-1.7.2.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
 
 ## Quick start
 
@@ -43,8 +43,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.7.1-linux-x64.tar.gz
-cd axehub-miner-v1.7.1-linux-x64
+tar -xzf axehub-miner-v1.7.2-linux-x64.tar.gz
+cd axehub-miner-v1.7.2-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
 # BitcoinIII: bc1... + algo = bc3hash)
@@ -52,6 +52,9 @@ chmod +x axehub-miner libcap_cuda.so
 ```
 
 A live status panel appears; the pool credits blocks to your address (solo).
+Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worker,
+`t` temperature limit, `s` save those to the config, `d` details, `u` tune,
+`e` tune mode, `r` restart, `q` stop. The `--http` status page has the same controls.
 
 **Hive OS**
 
@@ -62,7 +65,7 @@ A live status panel appears; the pool credits blocks to your address (solo).
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-1.7.1.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-1.7.2.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 
@@ -71,7 +74,7 @@ A live status panel appears; the pool credits blocks to your address (solo).
    | Pool URL (required) | `host:port` — the port is required. `pool.axehub.app:3336` for CAP, `pool.axehub.app:3338` for BC3 |
    | Wallet and worker template (required) | `%WAL%.%WORKER_NAME%` |
    | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted) |
-   | Pass | optional — `d=1` asks the pool for fixed difficulty 1 |
+   | Pass | optional — `d=1` asks the pool for fixed difficulty 1 (whirlpool only; for bc3hash use `x`) |
    | Extra config arguments | optional tuning keys, one per line |
 
 5. Apply the flight sheet to your rig.
@@ -96,15 +99,16 @@ On Hive OS there is no `axehub-miner.conf` to edit: wherever this README says
 "set X in the conf", put `X = ...` in the flight sheet's **Extra config
 arguments** box instead.
 
-**Clock tuning on Hive OS.** NVIDIA only — the tuner drives NVML, and on an AMD or
-CPU device it says so and exits without touching the config. It needs root, which
+**Tuning on Hive OS.** An NVIDIA card gets a locked core clock, an AMD card a power
+cap (saved to `axehub-miner.conf.power`, or `.bc3hash.power` for bc3hash); on a CPU
+device the tuner says so and exits without touching the config. It needs root, which
 a Hive Shell already is. Stop the miner first — the tuner takes the same GPU as
 the running one. From a Hive Shell:
 
 ```
 miner stop
 cd /hive/miners/custom/axehub-miner
-./axehub-miner --algo sha3-256t --tune hashrate
+./axehub-miner --algo <your algo> --tune hashrate
 miner start
 ```
 
@@ -117,8 +121,9 @@ panel. Your config is not modified by the tuner at all.
 The value is an **absolute locked core clock** (what `nvidia-smi -lgc` sets), not
 a `+/-` offset — if you prefer to set it in Hive's OC tab, it belongs in **Lock
 Core Clock (MHz)**, not **Core Clock**. To clear a saved clock, delete that file
-**and** run `nvidia-smi -i <pci-bus-id> -rgc` — an NVML lock outlives the process
-that set it, so deleting the file alone stops the clock coming back but does not
+**and** run `nvidia-smi -i <pci-bus-id> -rgc` and then, as a separate command,
+`nvidia-smi -i <pci-bus-id> -rmc` (the tuner may also have locked the memory clock) —
+a lock outlives the process that set it, so deleting the file alone stops the clock coming back but does not
 release a card that is already locked. The miner prints the bus id when it saves;
 it is not the same as the miner's device index. A `clock_lock` you set in Extra config wins outright and
 the file is ignored, so pin every card in that single line or leave the key out.
@@ -138,8 +143,7 @@ the 1% dev fee applies the same way.
 
 ### Mining on the CPU
 
-The CPU is a first-class backend (x86-64, AVX2-accelerated with a scalar
-fallback). Turn it on in any of these ways:
+The CPU is a first-class backend (any x86-64). Turn it on in any of these ways:
 
 ```
 --backend cpu          # CPU only, no GPU
@@ -149,9 +153,9 @@ fallback). Turn it on in any of these ways:
 ```
 
 or in `axehub-miner.conf` set `backend = cpu` (or `auto,cpu`), or
-`cpu_threads = auto` (or a number). CPU mining honors `--algo`, so it works for
-both CapStash and BitcoinIII. It is much slower than a GPU — use it on machines
-without one, or to mine on spare cores alongside the GPU.
+`cpu_threads = auto` (or a number). CPU mining honors `--algo` for all three
+algorithms; bc3hash on the CPU runs on any processor (AVX2 makes it faster). It is much slower than a GPU —
+use it on machines without one, or to mine on spare cores alongside the GPU.
 
 ## Verify the build
 
@@ -165,17 +169,16 @@ print `self-test PASS`.
 
 ## Supported hardware
 
-- **NVIDIA (CUDA, fastest):** GTX 10xx (Pascal), GTX 16xx / RTX 20xx (Turing),
-  RTX 30xx (Ampere), RTX 40xx (Ada), RTX 50xx (Blackwell — native code), and
-  newer via PTX. On Linux keep the bundled `libcap_cuda.so` and `libvulkan.so.1`
+- **NVIDIA (CUDA):** GTX 10xx (Pascal), GTX 16xx / RTX 20xx (Turing),
+  RTX 30xx (Ampere), RTX 40xx (Ada), RTX 50xx (Blackwell). On Linux keep the bundled `libcap_cuda.so` and `libvulkan.so.1`
   next to the binary — both load from the miner's own directory.
 - **AMD / Intel / other:** any Vulkan-capable GPU (`--backend vulkan`). The
   Vulkan loader ships with the miner; you still need your GPU vendor's Vulkan
   driver.
-- **CPU:** any x86-64, with runtime AVX2 dispatch and a scalar fallback;
-  AVX-512 is used for `sha3-256t` where the CPU supports it.
+- **CPU:** any x86-64.
 - `--backend auto`: NVIDIA → CUDA, everything else → Vulkan.
-- **OS:** Windows x64, Linux x86-64 (glibc 2.29+), Hive OS (custom miner package).
+- **OS:** Windows x64, Linux x86-64 (glibc 2.29+), Hive OS (custom miner package). AMD
+  cards mining bc3hash on Hive OS need an image based on Ubuntu 22.04 or newer.
 
 ## Key flags (override the conf)
 
@@ -183,21 +186,22 @@ print `self-test PASS`.
 --pool host:port   --wallet ADDR   --pass d=1   --worker NAME
 --algo whirlpool|bc3hash|sha3-256t   --backend auto|cuda|opencl|vulkan|cpu   --gpus 0,1
 --cpu   --cpu-threads N   add the CPU as a mining device (see "Mining on the CPU")
---tune MODE  sweep + lock the best GPU clock for MODE, then exit (NVIDIA; admin on
-             Windows, root on Linux and Hive OS;
+--tune MODE  find + save the best operating point for MODE, then exit (NVIDIA: core
+             clock; AMD on Linux: power cap; admin on Windows, root on Linux and Hive OS;
              MODE = hashrate|efficiency|balanced|profit - profit needs --kwh + --rev)
 --no-tui     plain scrolling log (headless / service use)
 --selftest   bit-exact correctness gate
 --http PORT       status page + API (localhost only)
 --http-bind lan   also serve on the LAN (e.g. the phone app)
---http-token SEC  required before the API may change pool or wallet (without it
-                  those are refused; read-only status stays open)
+--http-token SEC  required before the API or the status page may change anything
+                  (pool, wallet, worker, pause, temperature limit, tune, save,
+                  restart); without it those are refused, read-only status stays open
 ```
 
 ## Dev fee
 
-This build mines **1%** of the time to the developer's address (disclosed;
-~6 s per 600 s), for CapStash (CAP) and BitcoinIII (BC3) alike. The other 99%
+This build mines **1%** of the time to the developer's address (disclosed),
+for CapStash (CAP) and BitcoinIII (BC3) alike. The other 99%
 goes entirely to your configured wallet.
 
 The optional **Monero (XMR) dual-mine carries no dev fee (0%)** — the 1% applies

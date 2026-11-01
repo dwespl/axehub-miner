@@ -6,10 +6,11 @@
 ![GPU backends](https://img.shields.io/badge/GPU-CUDA%20%7C%20OpenCL%20%7C%20Vulkan%20%7C%20CPU-3fd07a)
 ![License](https://img.shields.io/badge/license-proprietary%20(binary--only)-8593a5)
 
-A fast multi-backend **solo miner** for two proof-of-work coins from one binary:
+A fast multi-backend **solo miner** for four proof-of-work algorithms from one binary:
 
 - **CapStash (CAP)** — whirlpool (default)
 - **BitcoinIII (BC3)** — bc3hash (`--algo bc3hash`; the pre-fork `sha3-256t` still works)
+- **qpow** — for qpow pools (`--algo qpow`)
 
 It mines on NVIDIA (CUDA), AMD (OpenCL or Vulkan), Intel &
 other GPUs (Vulkan), or CPU (x86-64), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
@@ -28,9 +29,9 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.7.2-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64   | `axehub-miner-v1.7.2-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
-| Hive OS     | `axehub-miner-1.7.2.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v1.8-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64   | `axehub-miner-v1.8-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Hive OS     | `axehub-miner-1.8.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
 
 ## Quick start
 
@@ -43,8 +44,8 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.7.2-linux-x64.tar.gz
-cd axehub-miner-v1.7.2-linux-x64
+tar -xzf axehub-miner-v1.8-linux-x64.tar.gz
+cd axehub-miner-v1.8-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
 # BitcoinIII: bc1... + algo = bc3hash)
@@ -65,7 +66,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-1.7.2.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-1.8.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 
@@ -73,7 +74,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    |---|---|
    | Pool URL (required) | `host:port` — the port is required. `pool.axehub.app:3336` for CAP, `pool.axehub.app:3338` for BC3 |
    | Wallet and worker template (required) | `%WAL%.%WORKER_NAME%` |
-   | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted) |
+   | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted); `qpow` for qpow pools |
    | Pass | optional — `d=1` asks the pool for fixed difficulty 1 (whirlpool only; for bc3hash use `x`) |
    | Extra config arguments | optional tuning keys, one per line |
 
@@ -153,7 +154,7 @@ The CPU is a first-class backend (any x86-64). Turn it on in any of these ways:
 ```
 
 or in `axehub-miner.conf` set `backend = cpu` (or `auto,cpu`), or
-`cpu_threads = auto` (or a number). CPU mining honors `--algo` for all three
+`cpu_threads = auto` (or a number). CPU mining honors `--algo` for all four
 algorithms; bc3hash on the CPU runs on any processor (AVX2 makes it faster). It is much slower than a GPU —
 use it on machines without one, or to mine on spare cores alongside the GPU.
 
@@ -163,6 +164,7 @@ use it on machines without one, or to mine on spare cores alongside the GPU.
 axehub-miner --selftest                  # CapStash (Whirlpool)
 axehub-miner --algo bc3hash --selftest   # BitcoinIII (bc3hash)
 axehub-miner --algo sha3-256t --selftest # BitcoinIII (pre-fork)
+axehub-miner --algo qpow --selftest      # qpow
 ```
 Runs a bit-exact GPU==CPU correctness check against a known test vector. It must
 print `self-test PASS`.
@@ -184,7 +186,7 @@ print `self-test PASS`.
 
 ```
 --pool host:port   --wallet ADDR   --pass d=1   --worker NAME
---algo whirlpool|bc3hash|sha3-256t   --backend auto|cuda|opencl|vulkan|cpu   --gpus 0,1
+--algo whirlpool|bc3hash|sha3-256t|qpow   --backend auto|cuda|opencl|vulkan|cpu   --gpus 0,1
 --cpu   --cpu-threads N   add the CPU as a mining device (see "Mining on the CPU")
 --tune MODE  find + save the best operating point for MODE, then exit (NVIDIA: core
              clock; AMD on Linux: power cap; admin on Windows, root on Linux and Hive OS;

@@ -2,6 +2,19 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.8] - 2026-11-01
+
+A fourth algorithm, and faster bc3hash. One binary — Windows, Linux and Hive OS.
+
+### Added
+- **New algorithm: `qpow`.** Select it with `--algo qpow`, with `algo = qpow` in
+  `axehub-miner.conf`, or on a Hive OS flight sheet. Runs on NVIDIA and AMD GPUs and on
+  the CPU.
+
+### Changed
+- **bc3hash is faster** on NVIDIA cards.
+- No configuration changes — existing configs and Hive OS flight sheets keep working.
+
 ## [1.7.2] - 2026-10-25
 
 Faster bc3hash, and a miner you can steer while it runs — from its panel or its status

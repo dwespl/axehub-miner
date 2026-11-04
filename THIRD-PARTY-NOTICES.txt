@@ -105,10 +105,50 @@ Terms for the Visual Studio distributable code, which permit redistribution with
 applications built using Visual Studio.
 
 --------------------------------------------------------------------------------
-AMD OpenCL runtime bundle  (Hive OS package only: rusticl-amd64.tgz)
+AMD OpenCL runtime bundle  (linux-x64-amd and Hive OS packages: rusticl-amd64.tgz)
 --------------------------------------------------------------------------------
-The Hive OS package carries an OpenCL runtime for AMD cards, made of
-these components, each under its own license: Mesa (rusticl, radeonsi), libdrm,
-LLVM, SPIRV-LLVM-Translator, SPIRV-Tools, libclc, libelf (elfutils), libedit,
-libbsd, libmd, libexpat, libffi, ICU, liblzma (xz), libxml2, zlib, zstd, ncurses
-(libtinfo), and the GCC runtime libraries (libstdc++, libgcc_s).
+The linux-x64-amd and Hive OS packages carry an OpenCL runtime for AMD cards
+(rusticl-amd64.tgz), made of these components, each under its own license: Mesa
+(rusticl, radeonsi; modified; MIT),
+libdrm (MIT), LLVM (Apache-2.0 WITH LLVM-exception), SPIRV-LLVM-Translator (NCSA),
+SPIRV-Tools (Apache-2.0), libclc (MIT/Apache-2.0), libelf / elfutils (LGPL-3.0-or-later
+or GPL-2.0-or-later), libedit (BSD-3-Clause), libbsd (BSD-3-Clause/ISC/MIT), libmd
+(BSD-2/3/ISC), libexpat (MIT), libffi (MIT), ICU (Unicode-3.0 / ICU), liblzma / xz
+(0BSD / public domain), libxml2 (MIT), zlib (Zlib), zstd (BSD-3-Clause/GPL-2.0), ncurses
+/ libtinfo (MIT-like X11), and the GCC runtime libraries libstdc++ and libgcc_s
+(GPL-3.0-or-later WITH GCC-runtime-exception).
+
+The full license texts of these components are reproduced in the file
+THIRD-PARTY-LICENSES-amd.txt, shipped beside this file in the linux-x64-amd and
+Hive OS packages. elfutils and the GCC runtime libraries are (L)GPL: their complete
+corresponding source is available from the respective upstream projects and the
+Debian/Ubuntu archive the libraries were built from; a written offer for that source
+is available on request through the project's public channel.
+
+--------------------------------------------------------------------------------
+ocl-icd  (OpenCL ICD loader, bundled in the linux-x64-amd package: libOpenCL.so.1)
+https://github.com/OCL-dev/ocl-icd
+BSD 2-Clause License
+--------------------------------------------------------------------------------
+Copyright (c) 2012, Brice Videau <brice.videau@imag.fr>
+Copyright (c) 2012, Vincent Danjean <Vincent.Danjean@ens-lyon.org>
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

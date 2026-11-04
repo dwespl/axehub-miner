@@ -1,0 +1,4 @@
+0f6a1043b3bc31a274d80e62d9f99a0e5f6beafde3352c45726c534b6565b14a  axehub-miner-v1.9-linux-x64.tar.gz
+58e028128ff5ef2da4647ce594199dfc9c6ed4c224dc898ea67e8cf3bdd8b768  axehub-miner-1.9.tar.gz
+c282f00b2f40aa61cba44dc9a4297e8c5ec14c115986a8b6de34df1843c879de  axehub-miner-v1.9-windows-x64.zip
+db1b95147aabd5b0758fc63d44afda6b30efcbb16111099220f198cb5d9dfc71  axehub-miner-v1.9-linux-x64-amd.tar.gz

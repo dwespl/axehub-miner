@@ -14,7 +14,7 @@ A fast multi-backend **solo miner** for four proof-of-work algorithms from one b
 
 It mines on NVIDIA (CUDA), AMD (OpenCL or Vulkan), Intel &
 other GPUs (Vulkan), or CPU (x86-64), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
-a built-in tuner, 1% disclosed dev fee.
+a built-in tuner, Prometheus metrics, 1% disclosed dev fee.
 
 There is no pool hardcoded anywhere: point `--pool` at any pool serving these
 coins. Ours are `pool.axehub.app:3336` (CAP) and `pool.axehub.app:3338` (BC3),
@@ -23,15 +23,41 @@ and they are what the examples below use.
 > Distributed in **binary form only**. See [Releases](../../releases) for the
 > latest build.
 
+## What it does
+
+- **Four backends in one binary:** CUDA, OpenCL, Vulkan and CPU. `--list-algos` prints
+  each algorithm with its backends, `--list-devices` the cards the miner sees.
+- **Live control while mining:** a keyboard panel and a built-in HTTP page — pause per
+  device, change the pool, wallet or worker on the fly, save to the config, restart.
+  Press `h`, or use **Hide IDs** on the page, to blank the pool, wallet and worker for a
+  screenshot.
+- **Monitoring:** XMRig-compatible `/1/summary` and `/2/summary` and a Prometheus
+  `/metrics` endpoint, ready for existing dashboards.
+- **Built-in tuner:** `--tune hashrate|efficiency|balanced|profit` sets the core and
+  memory clock on NVIDIA and the power cap on AMD on Linux, saves the point beside the
+  config and re-applies it at start.
+- **Correctness check:** `--selftest` proves every GPU kernel bit-exact against a CPU
+  reference.
+- **Pool-agnostic:** no hardcoded pool; `--fallback` takes one or more backup pools and
+  the miner fails back to the first.
+- **Rig safety:** a per-device temperature limit with automatic pause and resume, plus an
+  optional watchdog and emergency power-off, both off by default.
+- **Diagnostics:** `--log-file` with rotation, and `--report` for a bundle with the wallet
+  and password hidden.
+
 ## Download
 
 Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.8-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64   | `axehub-miner-v1.8-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
-| Hive OS     | `axehub-miner-1.8.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v1.9-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — NVIDIA and CPU | `axehub-miner-v1.9-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — AMD | `axehub-miner-v1.9-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash |
+| Hive OS     | `axehub-miner-1.9.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+
+To mine bc3hash on an AMD card on Linux, take the **AMD** package. Everyone else on Linux
+wants the smaller one; whirlpool, sha3-256t and qpow run on AMD there through Vulkan.
 
 ## Quick start
 
@@ -44,18 +70,31 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.8-linux-x64.tar.gz
-cd axehub-miner-v1.8-linux-x64
+tar -xzf axehub-miner-v1.9-linux-x64.tar.gz
+cd axehub-miner-v1.9-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
 # BitcoinIII: bc1... + algo = bc3hash)
 ./axehub-miner
 ```
 
+**Linux, bc3hash on an AMD card**
+```sh
+tar -xzf axehub-miner-v1.9-linux-x64-amd.tar.gz
+cd axehub-miner-v1.9-linux-x64-amd
+# edit axehub-miner.conf -> wallet = bc1..., algo = bc3hash,
+# pool = pool.axehub.app:3338, password = x
+sudo ./run.sh
+```
+`run.sh` sets up the bundled OpenCL runtime for this process only. The first run needs
+root to install the GPU builtins to `/usr/lib/clc`, and the card needs its render node, so
+later runs need root or membership of the `render` group. Requires glibc 2.35 or newer
+(Ubuntu 22.04, Debian 12 or newer).
+
 A live status panel appears; the pool credits blocks to your address (solo).
 Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worker,
 `t` temperature limit, `s` save those to the config, `d` details, `u` tune,
-`e` tune mode, `r` restart, `q` stop. The `--http` status page has the same controls.
+`e` tune mode, `r` restart, `h` hide IDs, `q` stop. The `--http` status page has the same controls.
 
 **Hive OS**
 
@@ -66,7 +105,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-1.8.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-1.9.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 
@@ -139,8 +178,8 @@ algorithm and pool, and use a BitcoinIII (`bc1...`) address:
 ```
 
 or set `algo = bc3hash`, `pool = pool.axehub.app:3338` and a `bc1...` wallet in
-`axehub-miner.conf`. Runs on NVIDIA (CUDA) and AMD/other discrete GPUs (OpenCL);
-the 1% dev fee applies the same way.
+`axehub-miner.conf`. Runs on NVIDIA (CUDA) and AMD/other discrete GPUs (OpenCL) — on
+Linux, AMD cards use the `linux-x64-amd` package; the 1% dev fee applies the same way.
 
 ### Mining on the CPU
 
@@ -178,14 +217,16 @@ print `self-test PASS`.
   Vulkan loader ships with the miner; you still need your GPU vendor's Vulkan
   driver.
 - **CPU:** any x86-64.
-- `--backend auto`: NVIDIA → CUDA, everything else → Vulkan.
+- `--backend auto`: NVIDIA → CUDA, everything else → Vulkan (OpenCL for bc3hash).
 - **OS:** Windows x64, Linux x86-64 (glibc 2.29+), Hive OS (custom miner package). AMD
-  cards mining bc3hash on Hive OS need an image based on Ubuntu 22.04 or newer.
+  cards mining bc3hash on Linux or Hive OS need glibc 2.35 or newer (Ubuntu 22.04 or
+  newer; on Hive OS an image based on it).
 
 ## Key flags (override the conf)
 
 ```
 --pool host:port   --wallet ADDR   --pass d=1   --worker NAME
+--fallback h:p[,h:p...]   backup pools, same algorithm; fails back to the first
 --algo whirlpool|bc3hash|sha3-256t|qpow   --backend auto|cuda|opencl|vulkan|cpu   --gpus 0,1
 --cpu   --cpu-threads N   add the CPU as a mining device (see "Mining on the CPU")
 --tune MODE  find + save the best operating point for MODE, then exit (NVIDIA: core
@@ -193,8 +234,15 @@ print `self-test PASS`.
              MODE = hashrate|efficiency|balanced|profit - profit needs --kwh + --rev)
 --no-tui     plain scrolling log (headless / service use)
 --selftest   bit-exact correctness gate
---http PORT       status page + API (localhost only)
---http-bind lan   also serve on the LAN (e.g. the phone app)
+--list-algos   --list-devices   --version   print info and exit
+--temp C     pause a device above C, resume 5 below
+--shutdown-temperature C   power the host off if a device reaches C (off by default)
+--watchdog-timeout S       restart if a device makes no progress for S seconds (off by default)
+--log-file PATH   also append the log here (rotated)
+--report [PATH]   write a diagnostic bundle with the wallet and password hidden
+--http PORT       status page + API (localhost only), /1/summary, /2/summary, /metrics
+--http-bind lan   also serve on the LAN (e.g. the phone app); anyone on the network can
+                  then read the status, including the wallet and worker name
 --http-token SEC  required before the API or the status page may change anything
                   (pool, wallet, worker, pause, temperature limit, tune, save,
                   restart); without it those are refused, read-only status stays open
@@ -202,12 +250,11 @@ print `self-test PASS`.
 
 ## Dev fee
 
-This build mines **1%** of the time to the developer's address (disclosed),
-for CapStash (CAP) and BitcoinIII (BC3) alike. The other 99%
-goes entirely to your configured wallet.
+This build mines **1%** of the time to the developer's address (disclosed, and
+announced in the log) on whirlpool, bc3hash and qpow. The other 99% goes entirely to
+your configured wallet.
 
-The optional **Monero (XMR) dual-mine carries no dev fee (0%)** — the 1% applies
-to CapStash (CAP) / BitcoinIII (BC3) mining only.
+The optional **Monero (XMR) dual-mine carries no dev fee (0%)**.
 
 ## Monero (XMR) dual-mine (optional)
 
@@ -228,4 +275,5 @@ The build is code-protected; please do not repackage it.
 Proprietary — **all rights reserved**. The binaries are provided under the
 end-user terms in [`LICENSE.txt`](LICENSE.txt) (binary-only; no reverse
 engineering, modification, or redistribution). Third-party components and their
-licenses are listed in [`THIRD-PARTY-NOTICES.txt`](THIRD-PARTY-NOTICES.txt).
+licenses are listed in [`THIRD-PARTY-NOTICES.txt`](THIRD-PARTY-NOTICES.txt); the packages
+with the AMD runtime also carry its license texts in `THIRD-PARTY-LICENSES-amd.txt`.

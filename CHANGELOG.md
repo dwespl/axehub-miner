@@ -2,6 +2,33 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.9] - 2026-11-04
+
+Dashboards and rig-safety options, faster bc3hash, and a Linux package for AMD. One
+binary — Windows, Linux and Hive OS.
+
+### Added
+- **Monitoring endpoints:** read-only, XMRig-compatible `/1/summary` and `/2/summary`,
+  and Prometheus `/metrics`, on the `--http` port.
+- **Several backup pools:** `--fallback host:port[,host:port...]`.
+- **Optional rig safety:** `--watchdog-timeout S` restarts a miner whose device stops
+  making progress, and `--shutdown-temperature C` powers the host off when a device
+  reaches C. Both are off by default.
+- **`--log-file PATH`** with rotation by size.
+- **`--report [PATH]`** writes a diagnostic bundle with the wallet and password hidden.
+- **`--list-algos` and `--list-devices`**, and a fuller `--help`.
+- **Hide IDs:** one key (`h`) in the panel or one button on the status page blanks the
+  pool, wallet and worker for a screenshot.
+- **A per-device result verification counter** in the control API.
+- **`linux-x64-amd` package** with the OpenCL runtime and loader for bc3hash on AMD
+  cards, started with `run.sh`. The `linux-x64` package stays small for NVIDIA and CPU.
+
+### Changed
+- **bc3hash is faster** on NVIDIA and AMD cards.
+- **A clearer message** when a GPU generation has no kernel for the chosen algorithm.
+- **Updated AMD OpenCL runtime** in the Hive OS package.
+- No configuration changes — existing configs and Hive OS flight sheets keep working.
+
 ## [1.8] - 2026-11-01
 
 A fourth algorithm, and faster bc3hash. One binary — Windows, Linux and Hive OS.

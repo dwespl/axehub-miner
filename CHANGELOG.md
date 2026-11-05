@@ -2,6 +2,14 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.9.1] - 2026-11-05
+
+Faster bc3hash on more NVIDIA cards. One binary — Windows, Linux and Hive OS.
+
+### Changed
+- **bc3hash is faster** on GTX 16-, RTX 20- and RTX 30-series cards.
+- No configuration changes — existing configs and Hive OS flight sheets keep working.
+
 ## [1.9] - 2026-11-04
 
 Dashboards and rig-safety options, faster bc3hash, and a Linux package for AMD. One

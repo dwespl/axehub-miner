@@ -2,6 +2,17 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.9.2] - 2026-11-08
+
+Faster qpow and bc3hash. One binary — Windows, Linux and Hive OS.
+
+### Changed
+- **qpow and bc3hash are faster** on NVIDIA cards (GTX 16-, RTX 30- and RTX 40-series).
+- **bc3hash is faster** on the AMD RX 580.
+- **Integrated GPUs are skipped by default** when the Vulkan backend selects devices; add
+  `--vulkan-igpu` (or `vulkan_igpu = 1` in the config) to include them.
+- Existing configs and Hive OS flight sheets keep working.
+
 ## [1.9.1] - 2026-11-05
 
 Faster bc3hash on more NVIDIA cards. One binary — Windows, Linux and Hive OS.

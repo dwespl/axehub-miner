@@ -2,6 +2,16 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.9.3] - 2026-11-10
+
+Faster qpow and bc3hash, and qpow on AMD through OpenCL. One binary — Windows, Linux and Hive OS.
+
+### Changed
+- **Faster qpow and bc3hash** on NVIDIA cards.
+- **qpow now runs on AMD through OpenCL**, using the bundled runtime in the AMD package
+  (faster than the Vulkan shader); without that runtime, qpow falls back to Vulkan automatically.
+- Existing configs and Hive OS flight sheets keep working.
+
 ## [1.9.2] - 2026-11-08
 
 Faster qpow and bc3hash. One binary — Windows, Linux and Hive OS.

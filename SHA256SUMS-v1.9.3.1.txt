@@ -1,0 +1,4 @@
+4a00ffb10cf113566b77e25f02268e5b52fc10f47c7193cf4d7a5b6c87bb2394 *axehub-miner-1.9.3.1.tar.gz
+35babdd0a930403357a9b00c23b075f14b3608a175008c25bb5d2e40a5f0a931 *axehub-miner-v1.9.3.1-linux-x64-amd.tar.gz
+3fb028c11c6e4b6bf9048a92821b1dfca5e29e51630f0cffed8267a2510fed51 *axehub-miner-v1.9.3.1-linux-x64.tar.gz
+47ebbfb6a2ebfe985a08ff9972442eb85513a595d629ef69cdf3df08204e0516 *axehub-miner-v1.9.3.1-windows-x64.zip

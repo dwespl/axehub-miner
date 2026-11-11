@@ -2,6 +2,13 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [1.9.3.1] - 2026-11-11
+
+Fixes bc3hash mining on the CPU.
+
+### Fixed
+- bc3hash now runs on the CPU as documented (the CPU backend). GPU and Hive OS mining are unchanged.
+
 ## [1.9.3] - 2026-11-10
 
 Faster qpow and bc3hash, and qpow on AMD through OpenCL. One binary — Windows, Linux and Hive OS.

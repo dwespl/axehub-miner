@@ -60,6 +60,57 @@ To mine bc3hash on an AMD card on Linux, take the **AMD** package. Everyone else
 wants the smaller one. whirlpool and sha3-256t run on AMD there through Vulkan;
 qpow uses the bundled OpenCL runtime in the AMD package (Vulkan as a fallback).
 
+## Run with Docker
+
+Three images on GHCR wrap the same release binary — one per GPU vendor. The
+**[one-command setup wizard](https://axehub.app/start/)** (also in 中文, Español,
+Português and Русский) writes the exact `docker run` line for your card, algorithm
+and wallet; the images work directly too:
+
+| Image | For |
+|---|---|
+| `ghcr.io/dwespl/axehub-miner:nvidia` | NVIDIA GPUs (CUDA) — needs the NVIDIA Container Toolkit |
+| `ghcr.io/dwespl/axehub-miner:amd` | AMD GPUs (OpenCL) — exposes `/dev/dri` + `/dev/kfd` |
+| `ghcr.io/dwespl/axehub-miner:cpu` | any x86-64 host, CPU only |
+
+Each also has an immutable `:VERSION-<variant>` tag (e.g. `:1.9.3.1-nvidia`); images are `linux/amd64`.
+
+```sh
+# NVIDIA — set wallet and algorithm; the pool defaults to AxeHub's own
+docker run -d --name axehub-miner --restart unless-stopped --gpus all \
+  -e WALLET=cap1qYOUR_ADDRESS -e ALGO=whirlpool \
+  ghcr.io/dwespl/axehub-miner:nvidia
+
+# AMD, BitcoinIII (bc3hash) — the cache volume keeps the one-time OpenCL compile
+docker run -d --name axehub-miner --restart unless-stopped \
+  --device /dev/dri --device /dev/kfd -v axehub_cache:/root/.cache \
+  -e WALLET=bc1qYOUR_ADDRESS -e ALGO=bc3hash \
+  ghcr.io/dwespl/axehub-miner:amd
+
+# CPU only
+docker run -d --name axehub-miner --restart unless-stopped \
+  -e WALLET=cap1qYOUR_ADDRESS -e ALGO=whirlpool \
+  ghcr.io/dwespl/axehub-miner:cpu
+```
+
+`WALLET` and `ALGO` are all you need; `POOL` defaults per algorithm (`whirlpool`
+and `bc3hash` to AxeHub's pool, `sha3-256t` and `qpow` need `-e POOL=host:port`).
+Also accepted: `WORKER`, `PASS`, `BACKEND`, `FALLBACK`, `HTTP`, `EXTRA_ARGS`,
+`CONFIG`. Watch it with `docker logs -f axehub-miner`; stop with `docker stop axehub-miner`.
+
+The AMD image compiles its OpenCL kernel on the first start (a few minutes — keep
+the cache volume). Confirm an NVIDIA host is set up with:
+
+```sh
+docker run --rm --gpus all --entrypoint /opt/axehub/axehub-miner \
+  ghcr.io/dwespl/axehub-miner:nvidia --selftest   # prints: self-test PASS
+```
+
+On Windows the CPU image runs through Docker Desktop/WSL2, and NVIDIA passthrough
+works there too, though the native zip stays the proven path for GPU mining on
+Windows; for an AMD card on Windows use the zip. macOS and ARM are not supported —
+use a Linux x86-64 host or the native packages.
+
 ## Quick start
 
 **Windows**

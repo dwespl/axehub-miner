@@ -2,6 +2,22 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.0] - 2026-11-12
+
+A new algorithm — **poscan** — on NVIDIA and AMD, and faster whirlpool. One binary —
+Windows, Linux and Hive OS.
+
+### Added
+- **poscan**, a new proof-of-work algorithm (`--algo poscan`), on NVIDIA (CUDA) and on AMD
+  (OpenCL, Linux and Hive OS). On an AMD card `run.sh` and the Hive OS start script set up
+  the bundled OpenCL runtime for poscan automatically; on NVIDIA nothing extra is needed.
+  poscan has no default pool — point `--pool` at a poscan pool.
+- A hash-rate readout for poscan and bc3hash in the status panel and page.
+
+### Changed
+- **Faster whirlpool** on NVIDIA cards.
+- Existing configs and Hive OS flight sheets keep working.
+
 ## [1.9.3.1] - 2026-11-11
 
 Fixes bc3hash mining on the CPU.

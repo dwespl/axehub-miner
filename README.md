@@ -6,11 +6,12 @@
 ![GPU backends](https://img.shields.io/badge/GPU-CUDA%20%7C%20OpenCL%20%7C%20Vulkan%20%7C%20CPU-3fd07a)
 ![License](https://img.shields.io/badge/license-proprietary%20(binary--only)-8593a5)
 
-A fast multi-backend **solo miner** for four proof-of-work algorithms from one binary:
+A fast multi-backend **solo miner** for five proof-of-work algorithms from one binary:
 
 - **CapStash (CAP)** — whirlpool (default)
 - **BitcoinIII (BC3)** — bc3hash (`--algo bc3hash`; the pre-fork `sha3-256t` still works)
 - **qpow** — for qpow pools (`--algo qpow`)
+- **poscan** — for poscan pools (`--algo poscan`; NVIDIA via CUDA, AMD via OpenCL on Linux)
 
 It mines on NVIDIA (CUDA), AMD (OpenCL or Vulkan), Intel &
 other GPUs (Vulkan), or CPU (x86-64), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
@@ -26,7 +27,9 @@ and they are what the examples below use.
 ## What it does
 
 - **Four backends in one binary:** CUDA, OpenCL, Vulkan and CPU. `--list-algos` prints
-  each algorithm with its backends, `--list-devices` the cards the miner sees.
+  each algorithm with its backends, `--list-devices` the cards the miner sees. whirlpool,
+  sha3-256t and qpow run on any backend; bc3hash on NVIDIA (CUDA), other GPUs (OpenCL) and
+  the CPU; poscan on NVIDIA (CUDA) and AMD (OpenCL, Linux) only.
 - **Live control while mining:** a keyboard panel and a built-in HTTP page — pause per
   device, change the pool, wallet or worker on the fly, save to the config, restart.
   Press `h`, or use **Hide IDs** on the page, to blank the pool, wallet and worker for a
@@ -51,14 +54,15 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v1.9.3.1-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64 — NVIDIA and CPU | `axehub-miner-v1.9.3.1-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64 — AMD | `axehub-miner-v1.9.3.1-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash and qpow |
-| Hive OS     | `axehub-miner-1.9.3.1.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v2.0.0-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — NVIDIA and CPU | `axehub-miner-v2.0.0-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — AMD | `axehub-miner-v2.0.0-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash, qpow and poscan |
+| Hive OS     | `axehub-miner-2.0.0.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
 
-To mine bc3hash on an AMD card on Linux, take the **AMD** package. Everyone else on Linux
-wants the smaller one. whirlpool and sha3-256t run on AMD there through Vulkan;
-qpow uses the bundled OpenCL runtime in the AMD package (Vulkan as a fallback).
+To mine bc3hash or poscan on an AMD card on Linux, take the **AMD** package. Everyone else
+on Linux wants the smaller one. whirlpool and sha3-256t run on AMD there through Vulkan;
+qpow uses the bundled OpenCL runtime in the AMD package (Vulkan as a fallback); poscan on
+AMD runs only through that OpenCL runtime (no Vulkan form).
 
 ## Run with Docker
 
@@ -73,7 +77,7 @@ and wallet; the images work directly too:
 | `ghcr.io/dwespl/axehub-miner:amd` | AMD GPUs (OpenCL) — exposes `/dev/dri` + `/dev/kfd` |
 | `ghcr.io/dwespl/axehub-miner:cpu` | any x86-64 host, CPU only |
 
-Each also has an immutable `:VERSION-<variant>` tag (e.g. `:1.9.3.1-nvidia`); images are `linux/amd64`.
+Each also has an immutable `:VERSION-<variant>` tag (e.g. `:2.0.0-nvidia`); images are `linux/amd64`.
 
 ```sh
 # NVIDIA — set wallet and algorithm; the pool defaults to AxeHub's own
@@ -94,7 +98,7 @@ docker run -d --name axehub-miner --restart unless-stopped \
 ```
 
 `WALLET` and `ALGO` are all you need; `POOL` defaults per algorithm (`whirlpool`
-and `bc3hash` to AxeHub's pool, `sha3-256t` and `qpow` need `-e POOL=host:port`).
+and `bc3hash` to AxeHub's pool, `sha3-256t`, `qpow` and `poscan` need `-e POOL=host:port`).
 Also accepted: `WORKER`, `PASS`, `BACKEND`, `FALLBACK`, `HTTP`, `EXTRA_ARGS`,
 `CONFIG`. Watch it with `docker logs -f axehub-miner`; stop with `docker stop axehub-miner`.
 
@@ -122,8 +126,8 @@ use a Linux x86-64 host or the native packages.
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v1.9.3.1-linux-x64.tar.gz
-cd axehub-miner-v1.9.3.1-linux-x64
+tar -xzf axehub-miner-v2.0.0-linux-x64.tar.gz
+cd axehub-miner-v2.0.0-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
 # BitcoinIII: bc1... + algo = bc3hash)
@@ -132,8 +136,8 @@ chmod +x axehub-miner libcap_cuda.so
 
 **Linux, bc3hash on an AMD card**
 ```sh
-tar -xzf axehub-miner-v1.9.3.1-linux-x64-amd.tar.gz
-cd axehub-miner-v1.9.3.1-linux-x64-amd
+tar -xzf axehub-miner-v2.0.0-linux-x64-amd.tar.gz
+cd axehub-miner-v2.0.0-linux-x64-amd
 # edit axehub-miner.conf -> wallet = bc1..., algo = bc3hash,
 # pool = pool.axehub.app:3338, password = x
 sudo ./run.sh
@@ -157,7 +161,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-1.9.3.1.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-2.0.0.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 
@@ -165,7 +169,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    |---|---|
    | Pool URL (required) | `host:port` — the port is required. `pool.axehub.app:3336` for CAP, `pool.axehub.app:3338` for BC3 |
    | Wallet and worker template (required) | `%WAL%.%WORKER_NAME%` |
-   | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted); `qpow` for qpow pools |
+   | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted); `qpow` for qpow pools; `poscan` for poscan pools |
    | Pass | optional — `d=1` asks the pool for fixed difficulty 1 (whirlpool only; for bc3hash use `x`) |
    | Extra config arguments | optional tuning keys, one per line |
 
@@ -233,6 +237,21 @@ or set `algo = bc3hash`, `pool = pool.axehub.app:3338` and a `bc1...` wallet in
 `axehub-miner.conf`. Runs on NVIDIA (CUDA) and AMD/other discrete GPUs (OpenCL) — on
 Linux, AMD cards use the `linux-x64-amd` package; the 1% dev fee applies the same way.
 
+### Mining poscan
+
+poscan is a **GPU-only** algorithm — NVIDIA (CUDA) or AMD (OpenCL on Linux); it has no CPU
+or Vulkan form. There is no AxeHub poscan pool, so point `--pool` at a poscan pool and use
+that pool's address format:
+
+```
+--algo poscan --pool host:port --wallet YOUR_ADDRESS
+```
+
+On NVIDIA nothing extra is needed. On an AMD card take the `linux-x64-amd` package and start
+with `run.sh` (as root, or as a member of the `render` group); it sets up the bundled OpenCL
+runtime for poscan automatically. On Hive OS set the **Hash algorithm** field to `poscan`.
+The 1% dev fee applies the same way.
+
 ### Mining on the CPU
 
 The CPU is a first-class backend (any x86-64). Turn it on in any of these ways:
@@ -245,8 +264,9 @@ The CPU is a first-class backend (any x86-64). Turn it on in any of these ways:
 ```
 
 or in `axehub-miner.conf` set `backend = cpu` (or `auto,cpu`), or
-`cpu_threads = auto` (or a number). CPU mining honors `--algo` for all four
-algorithms; bc3hash on the CPU runs on any processor (AVX2 makes it faster). It is much slower than a GPU —
+`cpu_threads = auto` (or a number). CPU mining honors `--algo` for whirlpool, bc3hash,
+sha3-256t and qpow (poscan is GPU-only — NVIDIA CUDA or AMD OpenCL); bc3hash on the CPU
+runs on any processor (AVX2 makes it faster). It is much slower than a GPU —
 use it on machines without one, or to mine on spare cores alongside the GPU.
 
 ## Verify the build
@@ -256,6 +276,7 @@ axehub-miner --selftest                  # CapStash (Whirlpool)
 axehub-miner --algo bc3hash --selftest   # BitcoinIII (bc3hash)
 axehub-miner --algo sha3-256t --selftest # BitcoinIII (pre-fork)
 axehub-miner --algo qpow --selftest      # qpow
+axehub-miner --algo poscan --selftest    # poscan
 ```
 Runs a bit-exact GPU==CPU correctness check against a known test vector. It must
 print `self-test PASS`.
@@ -269,7 +290,7 @@ print `self-test PASS`.
   Vulkan loader ships with the miner; you still need your GPU vendor's Vulkan
   driver.
 - **CPU:** any x86-64.
-- `--backend auto`: NVIDIA → CUDA, everything else → Vulkan (OpenCL for bc3hash).
+- `--backend auto`: NVIDIA → CUDA, everything else → Vulkan (OpenCL for bc3hash and poscan).
 - On Linux, integrated GPUs (iGPU/APU) are skipped by default when `--backend auto` or
   `vulkan` picks devices. Add `--vulkan-igpu` (or `vulkan_igpu = 1` in the config) to
   mine on them too.
@@ -282,7 +303,7 @@ print `self-test PASS`.
 ```
 --pool host:port   --wallet ADDR   --pass d=1   --worker NAME
 --fallback h:p[,h:p...]   backup pools, same algorithm; fails back to the first
---algo whirlpool|bc3hash|sha3-256t|qpow   --backend auto|cuda|opencl|vulkan|cpu   --gpus 0,1
+--algo whirlpool|bc3hash|sha3-256t|qpow|poscan   --backend auto|cuda|opencl|vulkan|cpu   --gpus 0,1
 --cpu   --cpu-threads N   add the CPU as a mining device (see "Mining on the CPU")
 --tune MODE  find + save the best operating point for MODE, then exit (NVIDIA: core
              clock; AMD on Linux: power cap; admin on Windows, root on Linux and Hive OS;
@@ -306,7 +327,7 @@ print `self-test PASS`.
 ## Dev fee
 
 This build mines **1%** of the time to the developer's address (disclosed, and
-announced in the log) on whirlpool, bc3hash and qpow. The other 99% goes entirely to
+announced in the log) on whirlpool, bc3hash, qpow and poscan. The other 99% goes entirely to
 your configured wallet.
 
 The optional **Monero (XMR) dual-mine carries no dev fee (0%)**.

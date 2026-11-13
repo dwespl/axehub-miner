@@ -134,7 +134,7 @@ chmod +x axehub-miner libcap_cuda.so
 ./axehub-miner
 ```
 
-**Linux, bc3hash on an AMD card**
+**Linux, an AMD card (bc3hash shown; qpow and poscan start the same way)**
 ```sh
 tar -xzf axehub-miner-v2.0.0-linux-x64-amd.tar.gz
 cd axehub-miner-v2.0.0-linux-x64-amd
@@ -295,33 +295,49 @@ print `self-test PASS`.
   `vulkan` picks devices. Add `--vulkan-igpu` (or `vulkan_igpu = 1` in the config) to
   mine on them too.
 - **OS:** Windows x64, Linux x86-64 (glibc 2.29+), Hive OS (custom miner package). AMD
-  cards mining bc3hash on Linux or Hive OS need glibc 2.35 or newer (Ubuntu 22.04 or
-  newer; on Hive OS an image based on it).
+  cards mining bc3hash, qpow or poscan through the bundled OpenCL runtime on Linux or
+  Hive OS need glibc 2.35 or newer (Ubuntu 22.04 or newer; on Hive OS an image based on it).
 
 ## Key flags (override the conf)
 
 ```
---pool host:port   --wallet ADDR   --pass d=1   --worker NAME
+--config FILE             use this config instead of axehub-miner.conf
+--pool host:port          the pool to mine on
+--wallet ADDR             your payout address
+--pass P                  the pool password (d=1: fixed difficulty 1, whirlpool only)
+--worker NAME             names this rig to the pool
 --fallback h:p[,h:p...]   backup pools, same algorithm; fails back to the first
---algo whirlpool|bc3hash|sha3-256t|qpow|poscan   --backend auto|cuda|opencl|vulkan|cpu   --gpus 0,1
---cpu   --cpu-threads N   add the CPU as a mining device (see "Mining on the CPU")
---tune MODE  find + save the best operating point for MODE, then exit (NVIDIA: core
-             clock; AMD on Linux: power cap; admin on Windows, root on Linux and Hive OS;
-             MODE = hashrate|efficiency|balanced|profit - profit needs --kwh + --rev)
---no-tui     plain scrolling log (headless / service use)
---selftest   bit-exact correctness gate
---list-algos   --list-devices   --version   print info and exit
---temp C     pause a device above C, resume 5 below
---shutdown-temperature C   power the host off if a device reaches C (off by default)
---watchdog-timeout S       restart if a device makes no progress for S seconds (off by default)
---log-file PATH   also append the log here (rotated)
---report [PATH]   write a diagnostic bundle with the wallet and password hidden
---http PORT       status page + API (localhost only), /1/summary, /2/summary, /metrics
---http-bind lan   also serve on the LAN (e.g. the phone app); anyone on the network can
-                  then read the status, including the wallet and worker name
---http-token SEC  required before the API or the status page may change anything
-                  (pool, wallet, worker, pause, temperature limit, tune, save,
-                  restart); without it those are refused, read-only status stays open
+--algo NAME               whirlpool | bc3hash | sha3-256t | qpow | poscan
+--backend LIST            auto | cuda | opencl | vulkan | cpu, comma-separated
+                          (e.g. auto,cpu)
+--gpus 0,1                use only these device indices (default: all)
+--cpu                     add the CPU as a mining device (see "Mining on the CPU")
+--cpu-threads N           CPU worker threads (0 or omitted = auto)
+--tune MODE               find + save the best operating point for MODE, then exit
+                          (NVIDIA: core + memory clock; AMD on Linux: power cap;
+                          admin on Windows, root on Linux and Hive OS)
+                          MODE = hashrate | efficiency | balanced | profit
+                          (profit needs --kwh + --rev)
+--no-tui                  plain scrolling log (headless / service use)
+--selftest                bit-exact correctness gate
+--list-algos              print the algorithms and their backends, then exit
+--list-devices            print the devices the miner sees, then exit
+--version                 print the version, then exit
+--temp C                  pause a device above C, resume 5 below
+--shutdown-temperature C  power the host off if a device reaches C (off by default)
+--watchdog-timeout S      restart if a device makes no progress for S seconds
+                          (off by default)
+--log-file PATH           also append the log here (rotated)
+--report [PATH]           write a diagnostic bundle with the wallet and password hidden
+--http PORT               status page + API, localhost only
+                          (/1/summary, /2/summary, /metrics)
+--http-bind lan           also serve on the LAN (e.g. the phone app); anyone on the
+                          network can then read the status, including the wallet
+                          and worker name
+--http-token SEC          required before the API or the status page may change
+                          anything (pool, wallet, worker, pause, temperature limit,
+                          tune, save, restart); without it those are refused,
+                          read-only status stays open
 ```
 
 ## Dev fee

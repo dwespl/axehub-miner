@@ -54,10 +54,10 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v2.0.0-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64 — NVIDIA and CPU | `axehub-miner-v2.0.0-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64 — AMD | `axehub-miner-v2.0.0-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash, qpow and poscan |
-| Hive OS     | `axehub-miner-2.0.0.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v2.0.1-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — NVIDIA and CPU | `axehub-miner-v2.0.1-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — AMD | `axehub-miner-v2.0.1-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash, qpow and poscan |
+| Hive OS     | `axehub-miner-2.0.1.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
 
 To mine bc3hash or poscan on an AMD card on Linux, take the **AMD** package. Everyone else
 on Linux wants the smaller one. whirlpool and sha3-256t run on AMD there through Vulkan;
@@ -77,7 +77,7 @@ and wallet; the images work directly too:
 | `ghcr.io/dwespl/axehub-miner:amd` | AMD GPUs (OpenCL) — exposes `/dev/dri` + `/dev/kfd` |
 | `ghcr.io/dwespl/axehub-miner:cpu` | any x86-64 host, CPU only |
 
-Each also has an immutable `:VERSION-<variant>` tag (e.g. `:2.0.0-nvidia`); images are `linux/amd64`.
+Each also has an immutable `:VERSION-<variant>` tag (e.g. `:2.0.1-nvidia`); images are `linux/amd64`.
 
 ```sh
 # NVIDIA — set wallet and algorithm; the pool defaults to AxeHub's own
@@ -126,8 +126,8 @@ use a Linux x86-64 host or the native packages.
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v2.0.0-linux-x64.tar.gz
-cd axehub-miner-v2.0.0-linux-x64
+tar -xzf axehub-miner-v2.0.1-linux-x64.tar.gz
+cd axehub-miner-v2.0.1-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
 # BitcoinIII: bc1... + algo = bc3hash)
@@ -136,8 +136,8 @@ chmod +x axehub-miner libcap_cuda.so
 
 **Linux, an AMD card (bc3hash shown; qpow and poscan start the same way)**
 ```sh
-tar -xzf axehub-miner-v2.0.0-linux-x64-amd.tar.gz
-cd axehub-miner-v2.0.0-linux-x64-amd
+tar -xzf axehub-miner-v2.0.1-linux-x64-amd.tar.gz
+cd axehub-miner-v2.0.1-linux-x64-amd
 # edit axehub-miner.conf -> wallet = bc1..., algo = bc3hash,
 # pool = pool.axehub.app:3338, password = x
 sudo ./run.sh
@@ -161,7 +161,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-2.0.0.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-2.0.1.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 

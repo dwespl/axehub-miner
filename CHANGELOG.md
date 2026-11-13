@@ -2,6 +2,17 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.1] - 2026-11-13
+
+Faster qpow on AMD, and the bundled AMD OpenCL runtime now works out of the box on
+more systems.
+
+### Changed
+- **Faster qpow** on AMD cards.
+- The bundled AMD OpenCL runtime (for bc3hash, qpow and poscan) now sets itself up on
+  more systems out of the box.
+- Existing configs and Hive OS flight sheets keep working.
+
 ## [2.0.0] - 2026-11-12
 
 A new algorithm — **poscan** — on NVIDIA and AMD, and faster whirlpool. One binary —

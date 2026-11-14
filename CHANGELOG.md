@@ -9,10 +9,10 @@ NVIDIA.
 
 ### Added
 - **rgrpow01**, a new proof-of-work algorithm (`--algo rgrpow01`), on NVIDIA (CUDA) and AMD
-  (OpenCL, with a Vulkan fallback). rgrpow01 has no default pool — point `--pool` at an
+  (OpenCL or Vulkan). rgrpow01 has no default pool — point `--pool` at an
   rgrpow01 pool.
 - **`--tune performance`** (NVIDIA): an automatic, safe core-clock overclock — every step is
-  verified bit-exact before it is kept — for higher hash rate at the same power limit.
+  verified bit-exact before it is kept — for a higher sustained hash rate.
 
 ### Changed
 - `--help` and `--list-algos` now cover poscan and rgrpow01.

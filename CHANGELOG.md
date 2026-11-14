@@ -2,6 +2,22 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.2] - 2026-11-14
+
+A new algorithm — rgrpow01 — on NVIDIA and AMD, and a new safe auto-tuning mode on
+NVIDIA.
+
+### Added
+- **rgrpow01**, a new proof-of-work algorithm (`--algo rgrpow01`), on NVIDIA (CUDA) and AMD
+  (OpenCL, with a Vulkan fallback). rgrpow01 has no default pool — point `--pool` at an
+  rgrpow01 pool.
+- **`--tune performance`** (NVIDIA): an automatic, safe core-clock overclock — every step is
+  verified bit-exact before it is kept — for higher hash rate at the same power limit.
+
+### Changed
+- `--help` and `--list-algos` now cover poscan and rgrpow01.
+- Existing configs and Hive OS flight sheets keep working.
+
 ## [2.0.1] - 2026-11-13
 
 Faster qpow on AMD, and the bundled AMD OpenCL runtime now works out of the box on

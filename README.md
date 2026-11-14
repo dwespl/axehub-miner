@@ -10,9 +10,9 @@ A fast multi-backend **solo miner** for six proof-of-work algorithms from one bi
 
 - **CapStash (CAP)** — whirlpool (default)
 - **BitcoinIII (BC3)** — bc3hash (`--algo bc3hash`; the pre-fork `sha3-256t` still works)
-- **qpow** — for qpow pools (`--algo qpow`)
-- **poscan** — for poscan pools (`--algo poscan`; NVIDIA via CUDA, AMD via OpenCL on Linux)
-- **rgrpow01** — for rgrpow01 pools (`--algo rgrpow01`; NVIDIA via CUDA, AMD via OpenCL or Vulkan)
+- **Quantus** — qpow (`--algo qpow`)
+- **Numen** — poscan (`--algo poscan`; NVIDIA via CUDA, AMD via OpenCL on Linux)
+- **RIGOR** — rgrpow01 (`--algo rgrpow01`; NVIDIA via CUDA, AMD via OpenCL or Vulkan)
 
 It mines on NVIDIA (CUDA), AMD (OpenCL or Vulkan), Intel &
 other GPUs (Vulkan), or CPU (x86-64), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,

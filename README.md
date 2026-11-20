@@ -6,13 +6,14 @@
 ![GPU backends](https://img.shields.io/badge/GPU-CUDA%20%7C%20OpenCL%20%7C%20Vulkan%20%7C%20CPU-3fd07a)
 ![License](https://img.shields.io/badge/license-proprietary%20(binary--only)-8593a5)
 
-A fast multi-backend **solo miner** for six proof-of-work algorithms from one binary:
+A fast multi-backend **solo miner** for seven proof-of-work algorithms from one binary:
 
 - **CapStash (CAP)** — whirlpool (default)
 - **BitcoinIII (BC3)** — bc3hash (`--algo bc3hash`; the pre-fork `sha3-256t` still works)
 - **Quantus** — qpow (`--algo qpow`)
 - **Numen** — poscan (`--algo poscan`; NVIDIA via CUDA, AMD via OpenCL on Linux)
 - **RIGOR** — rgrpow01 (`--algo rgrpow01`; NVIDIA via CUDA, AMD via OpenCL or Vulkan)
+- **nebhash** (`--algo nebhash`; NVIDIA via CUDA, AMD via OpenCL on Linux)
 
 It mines on NVIDIA (CUDA), AMD (OpenCL or Vulkan), Intel &
 other GPUs (Vulkan), or CPU (x86-64), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
@@ -30,8 +31,8 @@ and they are what the examples below use.
 - **Four backends in one binary:** CUDA, OpenCL, Vulkan and CPU. `--list-algos` prints
   each algorithm with its backends, `--list-devices` the cards the miner sees. whirlpool,
   sha3-256t and qpow run on any backend; bc3hash on NVIDIA (CUDA), other GPUs (OpenCL) and
-  the CPU; poscan on NVIDIA (CUDA) and AMD (OpenCL, Linux) only; rgrpow01 on NVIDIA (CUDA)
-  and AMD (OpenCL or Vulkan).
+  the CPU; poscan and nebhash on NVIDIA (CUDA) and AMD (OpenCL, Linux) only; rgrpow01 on
+  NVIDIA (CUDA) and AMD (OpenCL or Vulkan).
 - **Live control while mining:** a keyboard panel and a built-in HTTP page — pause per
   device, change the pool, wallet or worker on the fly, save to the config, restart.
   Press `h`, or use **Hide IDs** on the page, to blank the pool, wallet and worker for a
@@ -42,7 +43,7 @@ and they are what the examples below use.
   memory clock on NVIDIA and the power cap on AMD on Linux, saves the point beside the
   config and re-applies it at start. `--tune performance` (NVIDIA) instead applies a safe
   automatic core-clock overclock — each step verified bit-exact — for a higher sustained
-  hash rate.
+  hash rate; the card returns to its defaults when the miner exits.
 - **Correctness check:** `--selftest` proves every GPU kernel bit-exact against a CPU
   reference.
 - **Pool-agnostic:** no hardcoded pool; `--fallback` takes one or more backup pools and
@@ -58,15 +59,15 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v2.0.2-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64 — NVIDIA and CPU | `axehub-miner-v2.0.2-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64 — AMD | `axehub-miner-v2.0.2-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash, qpow and poscan |
-| Hive OS     | `axehub-miner-2.0.2.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v2.0.3-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — NVIDIA and CPU | `axehub-miner-v2.0.3-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — AMD | `axehub-miner-v2.0.3-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash, qpow, poscan, rgrpow01 and nebhash |
+| Hive OS     | `axehub-miner-2.0.3.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
 
-To mine bc3hash or poscan on an AMD card on Linux, take the **AMD** package. Everyone else
-on Linux wants the smaller one. whirlpool, sha3-256t and rgrpow01 run on AMD there through Vulkan;
-qpow uses the bundled OpenCL runtime in the AMD package (Vulkan as a fallback); poscan on
-AMD runs only through that OpenCL runtime (no Vulkan form).
+To mine bc3hash, poscan or nebhash on an AMD card on Linux, take the **AMD** package. Everyone
+else on Linux wants the smaller one. whirlpool and sha3-256t run on AMD there through Vulkan;
+qpow and rgrpow01 use the bundled OpenCL runtime in the AMD package (Vulkan as a fallback);
+poscan and nebhash on AMD run only through that OpenCL runtime (no Vulkan form).
 
 ## Run with Docker
 
@@ -81,7 +82,7 @@ and wallet; the images work directly too:
 | `ghcr.io/dwespl/axehub-miner:amd` | AMD GPUs (OpenCL) — exposes `/dev/dri` + `/dev/kfd` |
 | `ghcr.io/dwespl/axehub-miner:cpu` | any x86-64 host, CPU only |
 
-Each also has an immutable `:VERSION-<variant>` tag (e.g. `:2.0.2-nvidia`); images are `linux/amd64`.
+Each also has an immutable `:VERSION-<variant>` tag (e.g. `:2.0.3-nvidia`); images are `linux/amd64`.
 
 ```sh
 # NVIDIA — set wallet and algorithm; the pool defaults to AxeHub's own
@@ -102,7 +103,8 @@ docker run -d --name axehub-miner --restart unless-stopped \
 ```
 
 `WALLET` and `ALGO` are all you need; `POOL` defaults per algorithm (`whirlpool`
-and `bc3hash` to AxeHub's pool, `sha3-256t`, `qpow`, `poscan` and `rgrpow01` need `-e POOL=host:port`).
+and `bc3hash` to AxeHub's pool, `sha3-256t`, `qpow`, `poscan`, `rgrpow01` and `nebhash` need
+`-e POOL=host:port`). For nebhash the `nvidia` and `amd` images fetch its dataset file on first start.
 Also accepted: `WORKER`, `PASS`, `BACKEND`, `FALLBACK`, `HTTP`, `EXTRA_ARGS`,
 `CONFIG`. Watch it with `docker logs -f axehub-miner`; stop with `docker stop axehub-miner`.
 
@@ -130,18 +132,18 @@ use a Linux x86-64 host or the native packages.
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v2.0.2-linux-x64.tar.gz
-cd axehub-miner-v2.0.2-linux-x64
+tar -xzf axehub-miner-v2.0.3-linux-x64.tar.gz
+cd axehub-miner-v2.0.3-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
 # BitcoinIII: bc1... + algo = bc3hash)
 ./axehub-miner
 ```
 
-**Linux, an AMD card (bc3hash shown; qpow and poscan start the same way)**
+**Linux, an AMD card (bc3hash shown; qpow, poscan, rgrpow01 and nebhash start the same way)**
 ```sh
-tar -xzf axehub-miner-v2.0.2-linux-x64-amd.tar.gz
-cd axehub-miner-v2.0.2-linux-x64-amd
+tar -xzf axehub-miner-v2.0.3-linux-x64-amd.tar.gz
+cd axehub-miner-v2.0.3-linux-x64-amd
 # edit axehub-miner.conf -> wallet = bc1..., algo = bc3hash,
 # pool = pool.axehub.app:3338, password = x
 sudo ./run.sh
@@ -165,7 +167,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-2.0.2.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-2.0.3.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 
@@ -173,7 +175,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    |---|---|
    | Pool URL (required) | `host:port` — the port is required. `pool.axehub.app:3336` for CAP, `pool.axehub.app:3338` for BC3 |
    | Wallet and worker template (required) | `%WAL%.%WORKER_NAME%` |
-   | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted); `qpow` for Quantus; `poscan` for Numen; `rgrpow01` for RIGOR |
+   | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted); `qpow` for Quantus; `poscan` for Numen; `rgrpow01` for RIGOR; `nebhash` for nebhash |
    | Pass | optional — `d=1` asks the pool for fixed difficulty 1 (whirlpool only; for bc3hash use `x`) |
    | Extra config arguments | optional tuning keys, one per line |
 
@@ -230,11 +232,11 @@ the file is ignored, so pin every card in that single line or leave the key out.
 
 `--tune performance` (NVIDIA) works differently: it sets the power limit to the card's
 maximum and applies a core-clock **offset**, not a locked clock. It is saved per algorithm
-to `axehub-miner.conf.<algo>.vf` and re-applied at every start. If you prefer Hive's OC tab,
-it belongs in **Core Clock** (an offset), with **Power Limit** at the card's maximum — not
-in Lock Core Clock. Both stay on the card after the miner stops, until reset or reboot. To
-undo it, delete that `.vf` file, then set the core clock offset back to 0 and the power
-limit back to its default — or reboot, which resets both. `-rgc`/`-rmc` do not clear either.
+to `axehub-miner.conf.<algo>.vf`, applied at every start and returned to the card's
+defaults when the miner exits. If you prefer Hive's OC tab, it belongs in **Core Clock**
+(an offset), with **Power Limit** at the card's maximum — not in Lock Core Clock. To undo
+it, delete that `.vf` file. Cards the miner did not set are left alone, so your own OC
+from the OC tab stays in place.
 
 ### Mining BitcoinIII (BC3) instead
 
@@ -274,10 +276,29 @@ format:
 --algo rgrpow01 --pool host:port --wallet YOUR_ADDRESS
 ```
 
-On NVIDIA nothing extra is needed. On an AMD card on Linux it runs through Vulkan with either
-package (your GPU vendor's Vulkan driver is needed). On Hive OS it runs through the bundled
-OpenCL runtime, with Vulkan as a fallback; the Docker `amd` image runs it through OpenCL.
-On Hive OS set the **Hash algorithm** field to `rgrpow01`. The 1% dev fee applies the same way.
+On NVIDIA nothing extra is needed. On an AMD card on Linux take the `linux-x64-amd` package
+and start with `run.sh` (as root, or as a member of the `render` group): it runs rgrpow01
+through the bundled OpenCL runtime, with Vulkan as a fallback. Hive OS does the same, and
+the Docker `amd` image runs it through OpenCL. On Windows an AMD card runs it through
+Vulkan. On Hive OS set the **Hash algorithm** field to `rgrpow01`. The 1% dev fee applies
+the same way.
+
+### Mining nebhash
+
+nebhash is a **GPU-only** algorithm — NVIDIA (CUDA; GTX 16xx and newer, including RTX 50xx —
+GTX 10xx is not supported) or AMD (OpenCL on Linux and Hive OS); it has no CPU or Vulkan form.
+There is no AxeHub nebhash pool, so point `--pool` at a nebhash pool and use that pool's
+address format:
+
+```
+--algo nebhash --pool host:port --wallet YOUR_ADDRESS
+```
+
+nebhash needs the network's dataset file (16 MB). The miner fetches it once on first use and
+keeps it beside the binary; on a rig without internet, copy the file there and pass
+`--neb-dataset FILE`. On an AMD card take the `linux-x64-amd` package and start with `run.sh`
+(as root, or as a member of the `render` group). `--tune` is not available for nebhash. On
+Hive OS set the **Hash algorithm** field to `nebhash`. The 1% dev fee applies the same way.
 
 ### Mining on the CPU
 
@@ -292,7 +313,7 @@ The CPU is a first-class backend (any x86-64). Turn it on in any of these ways:
 
 or in `axehub-miner.conf` set `backend = cpu` (or `auto,cpu`), or
 `cpu_threads = auto` (or a number). CPU mining honors `--algo` for whirlpool, bc3hash,
-sha3-256t and qpow (poscan and rgrpow01 are GPU-only); bc3hash on the CPU
+sha3-256t and qpow (poscan, rgrpow01 and nebhash are GPU-only); bc3hash on the CPU
 runs on any processor (AVX2 makes it faster). It is much slower than a GPU —
 use it on machines without one, or to mine on spare cores alongside the GPU.
 
@@ -305,6 +326,7 @@ axehub-miner --algo sha3-256t --selftest # BitcoinIII (pre-fork)
 axehub-miner --algo qpow --selftest      # Quantus (qpow)
 axehub-miner --algo poscan --selftest    # Numen (poscan)
 axehub-miner --algo rgrpow01 --selftest  # RIGOR (rgrpow01)
+axehub-miner --algo nebhash --selftest   # nebhash (needs its dataset file)
 ```
 Runs a bit-exact GPU==CPU correctness check against a known test vector. It must
 print `self-test PASS`.
@@ -318,12 +340,12 @@ print `self-test PASS`.
   Vulkan loader ships with the miner; you still need your GPU vendor's Vulkan
   driver.
 - **CPU:** any x86-64.
-- `--backend auto`: NVIDIA → CUDA, everything else → Vulkan (OpenCL for bc3hash and poscan).
+- `--backend auto`: NVIDIA → CUDA, everything else → Vulkan (OpenCL for bc3hash, poscan and nebhash).
 - Integrated GPUs (iGPU/APU) are skipped by default when `--backend auto` or
   `vulkan` picks devices. Add `--vulkan-igpu` (or `vulkan_igpu = 1` in the config) to
   mine on them too.
 - **OS:** Windows x64, Linux x86-64 (glibc 2.29+), Hive OS (custom miner package). AMD
-  cards mining bc3hash, qpow or poscan through the bundled OpenCL runtime on Linux or
+  cards mining bc3hash, qpow, poscan or nebhash through the bundled OpenCL runtime on Linux or
   Hive OS need glibc 2.35 or newer (Ubuntu 22.04 or newer; on Hive OS an image based on it).
 
 ## Key flags (override the conf)
@@ -335,7 +357,10 @@ print `self-test PASS`.
 --pass P                  the pool password (d=1: fixed difficulty 1, whirlpool only)
 --worker NAME             names this rig to the pool
 --fallback h:p[,h:p...]   backup pools, same algorithm; fails back to the first
---algo NAME               whirlpool | bc3hash | sha3-256t | qpow | poscan | rgrpow01
+--algo NAME               whirlpool | bc3hash | sha3-256t | qpow | poscan | rgrpow01 |
+                          nebhash
+--neb-dataset FILE        the nebhash dataset file (default: found beside the miner, or
+                          fetched once)
 --backend LIST            auto | cuda | opencl | vulkan | cpu, comma-separated
                           (e.g. auto,cpu)
 --gpus 0,1                use only these device indices (default: all)
@@ -346,7 +371,8 @@ print `self-test PASS`.
                           admin on Windows, root on Linux and Hive OS)
                           MODE = hashrate | efficiency | balanced | profit | performance
                           (profit needs --kwh + --rev; performance is NVIDIA-only: a safe
-                          automatic core-clock overclock, each step verified bit-exact)
+                          automatic core-clock overclock, each step verified bit-exact,
+                          returned to default when the miner exits)
 --no-tui                  plain scrolling log (headless / service use)
 --selftest                bit-exact correctness gate
 --list-algos              print the algorithms and their backends, then exit
@@ -372,7 +398,7 @@ print `self-test PASS`.
 ## Dev fee
 
 This build mines **1%** of the time to the developer's address (disclosed, and
-announced in the log) on whirlpool, bc3hash, qpow, poscan and rgrpow01. The other 99% goes
+announced in the log) on whirlpool, bc3hash, qpow, poscan, rgrpow01 and nebhash. The other 99% goes
 entirely to your configured wallet.
 
 The optional **Monero (XMR) dual-mine carries no dev fee (0%)**.

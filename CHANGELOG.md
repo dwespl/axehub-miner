@@ -2,6 +2,34 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.3] - 2026-11-20
+
+A new algorithm — nebhash — on NVIDIA and AMD, faster qpow and bc3hash on more
+cards, and `--tune performance` now returns the card to its defaults when the
+miner exits.
+
+### Added
+- **nebhash**, a new proof-of-work algorithm (`--algo nebhash`), on NVIDIA (CUDA)
+  — GTX 16xx and newer, including RTX 50xx (GTX 10xx is not supported) — and AMD
+  (OpenCL, Linux and Hive OS). nebhash loads a one-time dataset file on first use
+  (or pass `--neb-dataset`); the Docker images fetch it automatically. nebhash has
+  no default pool — point `--pool` at a nebhash pool. (`--tune` is not available
+  for nebhash.)
+
+### Changed
+- **Faster qpow** on GTX 16xx / RTX 20xx / 30xx / 40xx cards, and updated qpow
+  Vulkan kernels on AMD.
+- **Faster bc3hash** on GTX 16xx / RTX 20xx / 30xx / 40xx cards.
+- **`--tune performance`**: the saved point is applied at start and returned to
+  the card's defaults when the miner exits. Cards the miner did not set are left
+  alone — to undo a saved point, delete its `.vf` file.
+- **rgrpow01 on AMD on Linux** (the `linux-x64-amd` package, `run.sh`) now runs
+  through the bundled OpenCL runtime, with Vulkan as a fallback — the same as on
+  Hive OS and in Docker. (Windows AMD still uses Vulkan.)
+- `--help` and `--list-algos` now cover nebhash; `--help` lists the `performance`
+  tuning mode and the `h` panel key.
+- Existing configs and Hive OS flight sheets keep working.
+
 ## [2.0.2] - 2026-11-14
 
 A new algorithm — rgrpow01 — on NVIDIA and AMD, and a new safe auto-tuning mode on

@@ -2,6 +2,27 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.4] - 2026-11-21
+
+Faster nebhash on NVIDIA and AMD, and a new option to limit how much GPU memory
+nebhash uses.
+
+### Added
+- **`--neb-table-mb N`** (config `neb_table_mb`) limits the GPU memory, in MiB,
+  that nebhash may use to mine faster. By default nebhash uses the card's free
+  memory less a reserve; set a limit on a card that also drives a display or is
+  shared with other programs, or `0` to turn the extra memory use off.
+
+### Changed
+- **Faster nebhash** on NVIDIA and AMD.
+- **nebhash on AMD** gives the extra GPU memory back while the miner waits for
+  work, and takes it again when work resumes, so an idle rig holds less memory.
+- `--selftest --algo nebhash` also checks the faster mode. It shows that step as
+  skipped (and the self-test still passes) when the option is `0` or the card has
+  too little free memory for it.
+- `--help` now lists RTX 50xx for nebhash (it already ran on RTX 50xx).
+- Existing configs and Hive OS flight sheets keep working.
+
 ## [2.0.3] - 2026-11-20
 
 A new algorithm — nebhash — on NVIDIA and AMD, faster qpow and bc3hash on more

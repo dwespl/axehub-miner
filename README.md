@@ -13,7 +13,7 @@ A fast multi-backend **solo miner** for seven proof-of-work algorithms from one 
 - **Quantus** — qpow (`--algo qpow`)
 - **Numen** — poscan (`--algo poscan`; NVIDIA via CUDA, AMD via OpenCL on Linux)
 - **RIGOR** — rgrpow01 (`--algo rgrpow01`; NVIDIA via CUDA, AMD via OpenCL or Vulkan)
-- **nebhash** (`--algo nebhash`; NVIDIA via CUDA, AMD via OpenCL on Linux)
+- **NEB** — nebhash (`--algo nebhash`; NVIDIA via CUDA, AMD via OpenCL on Linux)
 
 It mines on NVIDIA (CUDA), AMD (OpenCL or Vulkan), Intel &
 other GPUs (Vulkan), or CPU (x86-64), on **Windows, Linux and Hive OS**. Live TUI + HTTP status, bit-exact GPU==CPU self-test,
@@ -175,7 +175,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    |---|---|
    | Pool URL (required) | `host:port` — the port is required. `pool.axehub.app:3336` for CAP, `pool.axehub.app:3338` for BC3 |
    | Wallet and worker template (required) | `%WAL%.%WORKER_NAME%` |
-   | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted); `qpow` for Quantus; `poscan` for Numen; `rgrpow01` for RIGOR; `nebhash` for nebhash |
+   | Hash algorithm | `whirlpool` for CAP (the default if left blank) — **required for BC3**: set `bc3hash` (the pre-fork `sha3-256t` is still accepted); `qpow` for Quantus; `poscan` for Numen; `rgrpow01` for RIGOR; `nebhash` for NEB |
    | Pass | optional — `d=1` asks the pool for fixed difficulty 1 (whirlpool only; for bc3hash use `x`) |
    | Extra config arguments | optional tuning keys, one per line |
 
@@ -283,7 +283,7 @@ the Docker `amd` image runs it through OpenCL. On Windows an AMD card runs it th
 Vulkan. On Hive OS set the **Hash algorithm** field to `rgrpow01`. The 1% dev fee applies
 the same way.
 
-### Mining nebhash
+### Mining NEB (nebhash)
 
 nebhash is a **GPU-only** algorithm — NVIDIA (CUDA; GTX 16xx and newer, including RTX 50xx —
 GTX 10xx is not supported) or AMD (OpenCL on Linux and Hive OS); it has no CPU or Vulkan form.
@@ -330,7 +330,7 @@ axehub-miner --algo sha3-256t --selftest # BitcoinIII (pre-fork)
 axehub-miner --algo qpow --selftest      # Quantus (qpow)
 axehub-miner --algo poscan --selftest    # Numen (poscan)
 axehub-miner --algo rgrpow01 --selftest  # RIGOR (rgrpow01)
-axehub-miner --algo nebhash --selftest   # nebhash (needs its dataset file)
+axehub-miner --algo nebhash --selftest   # NEB (nebhash; needs its dataset file)
 ```
 Runs a bit-exact GPU==CPU correctness check against a known test vector. It must
 print `self-test PASS`.

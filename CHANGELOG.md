@@ -2,6 +2,17 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.5] - 2026-11-22
+
+Faster nebhash on NVIDIA and AMD.
+
+### Changed
+- **Faster nebhash** on NVIDIA cards. The miner now adjusts how it mines nebhash
+  to each card while it runs, so there is nothing to set.
+- **nebhash on AMD** makes better use of cards with a lot of GPU memory.
+- Other algorithms are unchanged. Existing configs and Hive OS flight sheets keep
+  working; 2.0.5 is a drop-in update from 2.0.4.
+
 ## [2.0.4] - 2026-11-21
 
 Faster nebhash on NVIDIA and AMD, and a new option to limit how much GPU memory

@@ -59,10 +59,10 @@ Grab the archive for your OS from the [latest release](../../releases/latest):
 
 | OS | Archive | Backends |
 |----|---------|----------|
-| Windows x64 | `axehub-miner-v2.0.5-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64 — NVIDIA and CPU | `axehub-miner-v2.0.5-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
-| Linux x64 — AMD | `axehub-miner-v2.0.5-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash, qpow, poscan, rgrpow01 and nebhash |
-| Hive OS     | `axehub-miner-2.0.5.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Windows x64 | `axehub-miner-v2.0.6-windows-x64.zip` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — NVIDIA and CPU | `axehub-miner-v2.0.6-linux-x64.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
+| Linux x64 — AMD | `axehub-miner-v2.0.6-linux-x64-amd.tar.gz` | CUDA · OpenCL · Vulkan · CPU, with the AMD OpenCL runtime for bc3hash, qpow, poscan, rgrpow01 and nebhash |
+| Hive OS     | `axehub-miner-2.0.6.tar.gz` | CUDA · OpenCL · Vulkan · CPU |
 
 To mine bc3hash, poscan or nebhash on an AMD card on Linux, take the **AMD** package. Everyone
 else on Linux wants the smaller one. whirlpool and sha3-256t run on AMD there through Vulkan;
@@ -82,7 +82,7 @@ and wallet; the images work directly too:
 | `ghcr.io/dwespl/axehub-miner:amd` | AMD GPUs (OpenCL) — exposes `/dev/dri` + `/dev/kfd` |
 | `ghcr.io/dwespl/axehub-miner:cpu` | any x86-64 host, CPU only |
 
-Each also has an immutable `:VERSION-<variant>` tag (e.g. `:2.0.5-nvidia`); images are `linux/amd64`.
+Each also has an immutable `:VERSION-<variant>` tag (e.g. `:2.0.6-nvidia`); images are `linux/amd64`.
 
 ```sh
 # NVIDIA — set wallet and algorithm; the pool defaults to AxeHub's own
@@ -132,8 +132,8 @@ use a Linux x86-64 host or the native packages.
 
 **Linux**
 ```sh
-tar -xzf axehub-miner-v2.0.5-linux-x64.tar.gz
-cd axehub-miner-v2.0.5-linux-x64
+tar -xzf axehub-miner-v2.0.6-linux-x64.tar.gz
+cd axehub-miner-v2.0.6-linux-x64
 chmod +x axehub-miner libcap_cuda.so
 # edit axehub-miner.conf -> set your wallet (CapStash cap1... by default;
 # BitcoinIII: bc1... + algo = bc3hash)
@@ -142,8 +142,8 @@ chmod +x axehub-miner libcap_cuda.so
 
 **Linux, an AMD card (bc3hash shown; qpow, poscan, rgrpow01 and nebhash start the same way)**
 ```sh
-tar -xzf axehub-miner-v2.0.5-linux-x64-amd.tar.gz
-cd axehub-miner-v2.0.5-linux-x64-amd
+tar -xzf axehub-miner-v2.0.6-linux-x64-amd.tar.gz
+cd axehub-miner-v2.0.6-linux-x64-amd
 # edit axehub-miner.conf -> wallet = bc1..., algo = bc3hash,
 # pool = pool.axehub.app:3338, password = x
 sudo ./run.sh
@@ -167,7 +167,7 @@ Its keys: `p` pause/resume (`0`-`9` one device), `w` wallet, `o` pool, `k` worke
    field also accepts a literal address instead of `%WAL%`.
 2. Create a Flight Sheet, pick **Custom** as the miner, and set the pool to
    **Configure in miner**.
-3. **Installation URL** — the URL of `axehub-miner-2.0.5.tar.gz` from the
+3. **Installation URL** — the URL of `axehub-miner-2.0.6.tar.gz` from the
    [latest release](../../releases/latest). **Miner name** — `axehub-miner`.
 4. Fill in the flight sheet:
 
@@ -297,8 +297,8 @@ address format:
 nebhash needs the network's dataset file (16 MB). The miner fetches it once on first use and
 keeps it beside the binary; on a rig without internet, copy the file there and pass
 `--neb-dataset FILE`. On an AMD card take the `linux-x64-amd` package and start with `run.sh`
-(as root, or as a member of the `render` group). `--tune` is not available for nebhash. On
-Hive OS set the **Hash algorithm** field to `nebhash`. The 1% dev fee applies the same way.
+(as root, or as a member of the `render` group). `--tune` works for nebhash as for the other
+algorithms (NVIDIA: clocks; AMD on Linux: power cap). On Hive OS set the **Hash algorithm** field to `nebhash`. The 1% dev fee applies the same way.
 
 By default nebhash uses the card's free GPU memory, less a reserve, to mine faster. On a card
 that also drives a display or is shared with other programs, cap it with `--neb-table-mb N`
@@ -372,6 +372,9 @@ print `self-test PASS`.
 --gpus 0,1                use only these device indices (default: all)
 --cpu                     add the CPU as a mining device (see "Mining on the CPU")
 --cpu-threads N           CPU worker threads (0 or omitted = auto)
+--cpu-wait on|off         on (default): the miner sleeps while a card works instead of
+                          keeping a CPU core busy for it; off keeps the busy-wait
+                          (config `cpu_wait`)
 --tune MODE               find + save the best operating point for MODE, then exit
                           (NVIDIA: core + memory clock; AMD on Linux: power cap;
                           admin on Windows, root on Linux and Hive OS)

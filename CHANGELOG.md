@@ -2,6 +2,39 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.6] - 2026-11-23
+
+Less CPU use on NVIDIA, `--tune` for nebhash, faster nebhash and bc3hash, and Hive OS fixes.
+
+### Added
+- **`--cpu-wait on|off`** (config `cpu_wait`). On by default: while an NVIDIA card
+  works, the miner sleeps instead of keeping a CPU core busy for it, so a rig no
+  longer spends one CPU core per card. `off` keeps the old busy-wait.
+- **`--tune` now works for nebhash**, with every mode (hashrate, efficiency,
+  balanced, profit, performance) and `--tune-all`: NVIDIA clocks, AMD power cap
+  on Linux. The result is saved per algorithm and per card, as for the other
+  algorithms.
+
+### Changed
+- **Faster nebhash** on NVIDIA and AMD.
+- **Faster bc3hash** on RTX 50xx cards.
+- **nebhash on AMD (Linux and Hive OS):** the start script keeps AMD cards awake
+  while they mine nebhash and puts the setting back when the miner exits. Without
+  the rights to do that, the miner limits its GPU memory use to what the system's
+  free RAM allows.
+- **Wrong algorithm on a nebhash pool:** the miner now pauses and says so in the
+  log, instead of mining shares the pool cannot use.
+- `--selftest` for nebhash and poscan also runs a short check under full load.
+
+### Fixed
+- **Hive OS:** an algorithm set in **Extra config arguments** now overrides the
+  flight sheet's field, as the miner itself does. With the **Hash algorithm**
+  field left blank, a `neb1...` wallet now mines nebhash instead of whirlpool.
+- **Hive OS on AMD:** algorithms that run only through OpenCL (bc3hash, poscan,
+  nebhash) no longer install the Vulkan driver at start.
+- Existing configs and Hive OS flight sheets keep working; 2.0.6 is a drop-in
+  update from 2.0.5.
+
 ## [2.0.5] - 2026-11-22
 
 Faster nebhash on NVIDIA and AMD.

@@ -2,6 +2,15 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.7] - 2026-11-24
+
+Faster nebhash on NVIDIA.
+
+### Changed
+- **Faster nebhash** on NVIDIA cards.
+- Existing configs and Hive OS flight sheets keep working; 2.0.7 is a drop-in
+  update from 2.0.6.
+
 ## [2.0.6] - 2026-11-23
 
 Less CPU use on NVIDIA, `--tune` for nebhash, faster nebhash and bc3hash, and Hive OS fixes.

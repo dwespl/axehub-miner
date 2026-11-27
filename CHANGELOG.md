@@ -2,6 +2,20 @@
 
 All notable changes to AxeHub Miner are documented here.
 
+## [2.0.8] - 2026-11-27
+
+Faster nebhash on NVIDIA and AMD, and a rig keeps mining when one card fails.
+
+### Added
+- **A card that fails or stops responding is now stopped on its own** while the
+  other cards keep mining. The miner tries that card again later, and exits for
+  a clean restart if the card hangs or no card is mining any more.
+
+### Changed
+- **Faster nebhash** on NVIDIA and AMD cards.
+- Existing configs and Hive OS flight sheets keep working; 2.0.8 is a drop-in
+  update from 2.0.7.
+
 ## [2.0.7] - 2026-11-24
 
 Faster nebhash on NVIDIA.
